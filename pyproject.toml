@@ -1,0 +1,23 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "py-mono-build"
+version = "0.1.0"
+description = ""
+authors = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
+packages = [
+    { include = "py-mono-build", from = "lib" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+Jinja2 = "^3.1.2"
+tomli = "^2.0.1"
+click = "^8.1.3"
+
+
+[tool.poetry.dev-dependencies]
+
