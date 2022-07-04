@@ -1,13 +1,17 @@
 import subprocess
 
 from py_mono_build.interfaces.base_class import BuildSystem
+import os
 
 
 class Docker(BuildSystem):
-    name = "docker"
+    name: str = "docker"
 
     def build(self, force_rebuild: bool = False):
+        uid = os.getuid()
+
         self.shutdown()
+        self._build(uid, "amirainvest_com")
 
     def purge(self):
         pass
@@ -18,11 +22,25 @@ class Docker(BuildSystem):
     def shutdown(self):
         self._kill_all_containers()
 
-    @staticmethod
-    def _kill_all_containers():
-        result = subprocess.run(["docker-compose", "down", "--remove-orphans"])
-        if result.returncode != 0:
-            exit(1)
-        result = subprocess.run(["docker", "ps", "-q", "|", "xargs", "-r", "docker", "kill"])
-        if result.returncode != 0:
+    def _build(self, uid: int, target: str):
+        subprocess.check_output(
+            f"DOCKER_BUILDKIT=1 "
+            f"BUILDKIT_PROGRESS=plain "
+            f"docker-compose build "
+            f"--build-arg USER_UID={uid} "
+            f"--progress plain "
+            f"{target}",
+            shell=True,
+            cwd=self._root_path,
+        )
+
+    def _kill_all_containers(self):
+        try:
+            subprocess.check_output(
+                "docker ps -q | xargs -r docker kill", shell=True, cwd=self._root_path,
+                )
+            subprocess.check_output(
+                ["docker-compose", "down", "--remove-orphans"], cwd=self._root_path,
+                )
+        except subprocess.CalledProcessError:
             exit(1)
