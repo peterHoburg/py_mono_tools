@@ -1,7 +1,7 @@
+import os
 import subprocess
 
 from py_mono_build.interfaces.base_class import BuildSystem
-import os
 
 
 class Docker(BuildSystem):
@@ -17,7 +17,7 @@ class Docker(BuildSystem):
         pass
 
     def run(self, command: str):
-        pass
+        self.build()
 
     def shutdown(self):
         self._kill_all_containers()
@@ -38,9 +38,9 @@ class Docker(BuildSystem):
         try:
             subprocess.check_output(
                 "docker ps -q | xargs -r docker kill", shell=True, cwd=self._root_path,
-                )
+            )
             subprocess.check_output(
                 ["docker-compose", "down", "--remove-orphans"], cwd=self._root_path,
-                )
+            )
         except subprocess.CalledProcessError:
             exit(1)

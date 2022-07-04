@@ -22,8 +22,8 @@ LINTERS: t.List
 
 
 @click.group()
-@click.option("--build-system", default="docker")
-@click.option("--execution-root-path", default=None)
+@click.option("--build-system", default="docker", type=str)
+@click.option("--execution-root-path", "-p", default=None, type=click.Path())
 def cli(build_system, execution_root_path):
     _get_execution_root_path(execution_root_path_string=execution_root_path)
     _init_build_system(build_system)
@@ -44,8 +44,10 @@ def _init_build_system(_build_system: str):
 
 
 @cli.command()
-def build():
-    CURRENT_BUILD_SYSTEM.build()
+@click.option("--force-rebuild", is_flag=True, default=False)
+@click.option("--modules", multiple=True, type=list[str], default=["all"])
+def build(force_rebuild, modules):
+    CURRENT_BUILD_SYSTEM.build(force_rebuild=force_rebuild)
 
 
 @cli.command()
@@ -101,7 +103,3 @@ def test():
 @cli.command()
 def validate():
     pass
-
-
-if __name__ == '__main__':
-    cli(["--execution-root-path", "../amira_clone", "build"])
