@@ -21,7 +21,20 @@ Jinja2 = "^3"
 tomli = "^2"
 click = "^8"
 black = "^22"
+isort = "^5"
 
 
 [tool.poetry.dev-dependencies]
 
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 120
+include_trailing_comma = "True"
+force_grid_wrap = 0
+use_parentheses = "True"
+combine_as_imports = "True"
+force_alphabetical_sort_within_sections = "True"
+ensure_newline_before_comments = "True"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+lines_after_imports = 2

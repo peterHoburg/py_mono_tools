@@ -44,10 +44,13 @@ class Docker(BuildSystem):
     def _kill_all_containers(self):
         try:
             subprocess.check_output(
-                "docker ps -q | xargs -r docker kill", shell=True, cwd=self._root_path,
+                "docker ps -q | xargs -r docker kill",
+                shell=True,
+                cwd=self._root_path,
             )
             subprocess.check_output(
-                ["docker-compose", "down", "--remove-orphans"], cwd=self._root_path,
+                ["docker-compose", "down", "--remove-orphans"],
+                cwd=self._root_path,
             )
         except subprocess.CalledProcessError:
             exit(1)

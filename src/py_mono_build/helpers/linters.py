@@ -38,3 +38,38 @@ class Black(Linter):
         black_process.communicate()
 
         return black_process.returncode
+
+
+class ISort(Linter):
+    name: str = "isort"
+    parallel_run: bool = False
+
+    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
+        super().__init__(path, args)
+
+    def run(self):
+        directory = self._path.resolve()
+        args = [
+            "isort",
+            directory,
+            *self._args,
+        ]
+
+        isort_process = subprocess.Popen(args, cwd=directory)
+        isort_process.communicate()
+
+        return isort_process.returncode
+
+    def check(self):
+        directory = self._path.resolve()
+        args = [
+            "isort",
+            "-c",
+            directory,
+            *self._args,
+        ]
+
+        isort_process = subprocess.Popen(args, cwd=directory)
+        isort_process.communicate()
+
+        return isort_process.returncode

@@ -1,6 +1,7 @@
 import importlib
 import importlib.machinery
 import importlib.util
+import logging
 import os
 import typing as t
 from pathlib import Path
@@ -8,7 +9,7 @@ from pathlib import Path
 import click
 
 from py_mono_build.helpers.docker import Docker
-from py_mono_build.interfaces.base_class import BuildSystem
+from py_mono_build.interfaces.base_class import BuildSystem, Linter
 
 
 try:
@@ -16,24 +17,33 @@ try:
 except ModuleNotFoundError:
     import tomli as tomllib
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+logger.debug("Starting main")
+
 EXECUTED_FROM: Path = Path(os.getcwd())
+logger.debug(f"Executed from: {EXECUTED_FROM}")
+
 CURRENT_BUILD_SYSTEM: t.Optional[BuildSystem] = None
+logger.debug(f"Current build system: {CURRENT_BUILD_SYSTEM}")
 
 BUILD_SYSTEMS: t.Dict[str, BuildSystem] = {Docker.name: Docker}
-VALIDATORS: t.List
-LINTERS: t.List
+logger.debug(f"Build systems: {BUILD_SYSTEMS}")
 
 
 @click.group()
 @click.option("--build-system", default="docker", type=str)
 @click.option("--execution-root-path", "-p", default=None, type=click.Path())
 def cli(build_system, execution_root_path):
+    logger.debug("Starting cli")
     _get_execution_root_path(execution_root_path_string=execution_root_path)
     _init_build_system(build_system)
 
 
 def _get_execution_root_path(execution_root_path_string: t.Optional[str] = None):
     if execution_root_path_string is not None:
+        logger.info(f"Overwriting execution root path: {execution_root_path_string}")
         global EXECUTED_FROM
 
         EXECUTED_FROM = Path(execution_root_path_string)
@@ -41,9 +51,12 @@ def _get_execution_root_path(execution_root_path_string: t.Optional[str] = None)
 
 
 def _init_build_system(_build_system: str):
+    logger.debug(f"Initializing build system: {_build_system}")
     global CURRENT_BUILD_SYSTEM
 
-    CURRENT_BUILD_SYSTEM = BUILD_SYSTEMS[_build_system](execution_root_path=EXECUTED_FROM)
+    CURRENT_BUILD_SYSTEM = BUILD_SYSTEMS[_build_system](
+        execution_root_path=EXECUTED_FROM
+    )
 
 
 @cli.command()
@@ -58,23 +71,35 @@ def deploy():
     pass
 
 
-@cli.command(name="format")
-def format_():
-    pass
-
-
 @cli.command()
 def init():
     pass
 
 
 @cli.command()
-def lint():
-    loader = importlib.machinery.SourceFileLoader("CONF", f"{EXECUTED_FROM}/CONF")
+@click.option("--check", is_flag=True, default=False)
+def lint(check: bool):
+    logger.info("Starting lint")
+
+    conf_location = f"{EXECUTED_FROM}/CONF"
+    logger.debug(f"CONF location: {conf_location}")
+
+    loader = importlib.machinery.SourceFileLoader("CONF", conf_location)
     spec = importlib.util.spec_from_loader(loader.name, loader)
     mod = importlib.util.module_from_spec(spec)
     loader.exec_module(mod)
-    print(mod.NAME)
+
+    linters: t.List[Linter] = mod.LINT
+    logger.debug(f"Linters: {linters}")
+
+    for linter in linters:
+        logger.debug(f"Linting: {linter}")
+        if check is True:
+            linter.check()
+        else:
+            linter.run()
+
+    logger.info("Linting complete")
 
 
 @cli.group()
