@@ -1,0 +1,23 @@
+#!/user/bin/env python
+# -*- coding: utf-8 -*-
+import pathlib
+
+from py_mono_build.helpers.linters import Bandit, Black, ISort, Mypy, Pydocstyle, Pyflakes, Pylint, DocStringFormatter
+
+
+path = pathlib.Path(__file__).parent
+
+NAME = "py_mono_build"
+
+LINT = [
+    Bandit(path=path),
+    Black(path=path),
+    DocStringFormatter(path=path),
+    ISort(path=path),
+    Mypy(path=path),
+    Pydocstyle(path=path),
+    Pyflakes(path=path),
+    Pylint(path=path),
+]
+TEST = []
+DEPLOY = []

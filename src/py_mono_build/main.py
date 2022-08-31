@@ -3,8 +3,8 @@ import importlib.machinery
 import importlib.util
 import logging
 import os
+import pathlib
 import typing as t
-from pathlib import Path
 
 import click
 
@@ -12,17 +12,12 @@ from py_mono_build.helpers.docker import Docker
 from py_mono_build.interfaces.base_class import BuildSystem, Linter
 
 
-try:
-    import tomllib
-except ModuleNotFoundError:
-    import tomli as tomllib
-
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 logger.debug("Starting main")
 
-EXECUTED_FROM: Path = Path(os.getcwd())
+EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
 logger.debug(f"Executed from: {EXECUTED_FROM}")
 
 CURRENT_BUILD_SYSTEM: t.Optional[BuildSystem] = None
@@ -33,21 +28,34 @@ logger.debug(f"Build systems: {BUILD_SYSTEMS}")
 
 
 @click.group()
-@click.option("--build-system", default="docker", type=str)
-@click.option("--execution-root-path", "-p", default=None, type=click.Path())
-def cli(build_system, execution_root_path):
+@click.option("--build_system", default="docker", type=str)
+@click.option("--absolute_path", "-ap", default=None, type=click.Path())
+@click.option("--relative_path", "-rp", default=None, type=click.Path())
+def cli(build_system, absolute_path, relative_path):
     logger.debug("Starting cli")
-    _get_execution_root_path(execution_root_path_string=execution_root_path)
+
+    if absolute_path is not None:
+        _set_absolute_path(absolute_path=absolute_path)
+    elif relative_path is not None:
+        _set_relative_path(relative_path=relative_path)
+
     _init_build_system(build_system)
 
 
-def _get_execution_root_path(execution_root_path_string: t.Optional[str] = None):
-    if execution_root_path_string is not None:
-        logger.info(f"Overwriting execution root path: {execution_root_path_string}")
-        global EXECUTED_FROM
+def _set_absolute_path(absolute_path: t.Optional[str] = None):
+    logger.info(f"Overwriting execution root path: {absolute_path}")
+    global EXECUTED_FROM
 
-        EXECUTED_FROM = Path(execution_root_path_string)
-        os.chdir(EXECUTED_FROM.resolve())
+    EXECUTED_FROM = pathlib.Path(absolute_path)
+    os.chdir(EXECUTED_FROM.resolve())
+
+
+def _set_relative_path(relative_path: t.Optional[str] = None):
+    logger.info(f"Overwriting execution root path: {relative_path}")
+    global EXECUTED_FROM
+
+    EXECUTED_FROM = EXECUTED_FROM.joinpath(pathlib.Path(relative_path))
+    os.chdir(EXECUTED_FROM.resolve())
 
 
 def _init_build_system(_build_system: str):

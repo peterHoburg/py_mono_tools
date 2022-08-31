@@ -22,6 +22,13 @@ tomli = "^2"
 click = "^8"
 black = "^22"
 isort = "^5"
+mypy = "^0.971"
+flake8 = "^5.0.4"
+pydocstyle = "^6.1.1"
+pyflakes = "^2.5.0"
+pylint = "^2.15.0"
+bandit = "^1.7.4"
+pydocstringformatter = "^0.7.2"
 
 
 [tool.poetry.dev-dependencies]
