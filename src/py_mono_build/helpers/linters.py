@@ -1,5 +1,5 @@
 import logging
-import subprocess
+import subprocess  # nosec B404
 import typing as t
 from pathlib import Path
 
@@ -10,7 +10,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 """
-Radon
+Radon.
+
+tflint
+terrascan
 """
 
 black = "\x1b[30m"
@@ -31,7 +34,7 @@ def run(linter: str, directory: Path, args: t.Optional[t.List[str]] = None) -> i
 
     logs = log_format.format(linter + " start")
 
-    process = subprocess.Popen(
+    process = subprocess.Popen(  # nosec B603
         args,
         cwd=directory,
         stdout=subprocess.PIPE,

@@ -13,6 +13,7 @@ packages = [
 
 [tool.poetry.scripts]
 mono-build = "py_mono_build.main:cli"
+pmb = "py_mono_build.main:cli"
 
 [tool.poetry.dependencies]
 python = "^3.9"

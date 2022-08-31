@@ -30,25 +30,25 @@ class Docker(BuildSystem):
         self._kill_all_containers()
 
     def _build(self, uid: int, target: str):
-        subprocess.check_output(
+        subprocess.check_output(  # nosec B603
             f"DOCKER_BUILDKIT=1 "
             f"BUILDKIT_PROGRESS=plain "
             f"docker-compose build "
             f"--build-arg USER_UID={uid} "
             f"--progress plain "
             f"{target}",
-            shell=True,
+            # shell=True,
             cwd=self._root_path,
         )
 
     def _kill_all_containers(self):
         try:
-            subprocess.check_output(
+            subprocess.check_output(  # nosec B607 B603
                 "docker ps -q | xargs -r docker kill",
-                shell=True,
+                # shell=True,
                 cwd=self._root_path,
             )
-            subprocess.check_output(
+            subprocess.check_output(  # nosec B607 B603
                 ["docker-compose", "down", "--remove-orphans"],
                 cwd=self._root_path,
             )
