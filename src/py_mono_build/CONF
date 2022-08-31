@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_build.helpers.linters import Bandit, Black, ISort, Mypy, Pydocstyle, Pyflakes, Pylint, DocStringFormatter
+from py_mono_build.helpers.linters import Bandit, Black, DocStringFormatter, Flake8, ISort, Mypy, Pydocstyle, Pylint
 
 
 path = pathlib.Path(__file__).parent
@@ -13,10 +13,10 @@ LINT = [
     Bandit(path=path),
     Black(path=path),
     DocStringFormatter(path=path),
+    Flake8(path=path),
     ISort(path=path),
     Mypy(path=path),
     Pydocstyle(path=path),
-    Pyflakes(path=path),
     Pylint(path=path),
 ]
 TEST = []

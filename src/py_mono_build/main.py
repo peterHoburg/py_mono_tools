@@ -12,7 +12,7 @@ from py_mono_build.helpers.docker import Docker
 from py_mono_build.interfaces.base_class import BuildSystem, Linter
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 logger.debug("Starting main")

@@ -1,5 +1,5 @@
 import os
-import subprocess
+import subprocess  # nosec B404
 from pathlib import Path
 
 from py_mono_build.interfaces.base_class import BuildSystem

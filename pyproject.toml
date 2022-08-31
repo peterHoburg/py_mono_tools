@@ -17,18 +17,17 @@ mono-build = "py_mono_build.main:cli"
 [tool.poetry.dependencies]
 python = "^3.9"
 
-Jinja2 = "^3"
-tomli = "^2"
-click = "^8"
+bandit = "^1"
 black = "^22"
+click = "^8"
+flake8 = "^5"
 isort = "^5"
+Jinja2 = "^3"
 mypy = "^0.971"
-flake8 = "^5.0.4"
-pydocstyle = "^6.1.1"
-pyflakes = "^2.5.0"
-pylint = "^2.15.0"
-bandit = "^1.7.4"
-pydocstringformatter = "^0.7.2"
+pydocstringformatter = "^0.7"
+pydocstyle = "^6"
+pylint = "^2"
+tomli = "^2"
 
 
 [tool.poetry.dev-dependencies]

@@ -6,30 +6,78 @@ from pathlib import Path
 from py_mono_build.interfaces.base_class import Linter
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 """
-Flake8
-    pyflakes
-    pycodestyle
-    mccabe
-
-
-pylint
-pyflakes
-pycodestyle
-
-pydocstyle
-pydocstringformatter
-
-Bandit
-mypy
-mccabe
 Radon
-Black
-Isort
 """
+
+black = "\x1b[30m"
+red = "\x1b[31m"
+green = "\x1b[32m"
+yellow = "\x1b[33m"
+blue = "\x1b[34m"
+magenta = "\x1b[35m"
+cyan = "\x1b[36m"
+white = "\x1b[37m"
+reset = "\x1b[0m"
+
+
+def run(linter: str, directory: Path, args: t.Optional[t.List[str]] = None) -> int:
+    log_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
+
+    logger.debug(f"Running {linter}: {args}")
+
+    logs = log_format.format(linter + " start")
+
+    process = subprocess.Popen(
+        args,
+        cwd=directory,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    stdout_data, stderr_data = process.communicate()
+
+    if process.returncode != 0:
+        logs += red
+    else:
+        logs += green
+
+    logs += stdout_data.decode("utf-8")
+    logs += stderr_data.decode("utf-8")
+
+    logger.debug(f"{linter} return code: {process.returncode}")
+
+    logs += reset
+    logs += log_format.format(linter + " end")
+
+    logger.info(logs)
+    return process.returncode
+
+
+class Bandit(Linter):
+    name: str = "bandit"
+    parallel_run: bool = True
+
+    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
+        super().__init__(path, args)
+
+    def run(self):
+        directory = self._path.resolve()
+        args = [
+            "bandit",
+            "-r",
+            directory,
+            *self._args,
+        ]
+        return run(self.name, directory, args)
+
+    def check(self):
+        return self.run()
+
+
 class Black(Linter):
     name: str = "black"
     parallel_run: bool = False
@@ -44,14 +92,7 @@ class Black(Linter):
             directory,
             *self._args,
         ]
-        logger.debug(f"Running black: {args}")
-
-        black_process = subprocess.Popen(args, cwd=directory)
-        black_process.communicate()
-
-        logger.debug(f"Return code: {black_process.returncode}")
-
-        return black_process.returncode
+        return run(self.name, directory, args)
 
     def check(self):
         directory = self._path.resolve()
@@ -61,15 +102,7 @@ class Black(Linter):
             directory,
             *self._args,
         ]
-
-        logger.debug(f"Running check black: {args}")
-
-        black_process = subprocess.Popen(args, cwd=directory)
-        black_process.communicate()
-
-        logger.debug(f"Return code: {black_process.returncode}")
-
-        return black_process.returncode
+        return run(self.name + " check", directory, args)
 
 
 class DocStringFormatter(Linter):
@@ -87,14 +120,8 @@ class DocStringFormatter(Linter):
             directory,
             *self._args,
         ]
-        logger.debug(f"Running docstring_formatter: {args}")
 
-        docstring_formatter_process = subprocess.Popen(args, cwd=directory)
-        docstring_formatter_process.communicate()
-
-        logger.debug(f"Return code: {docstring_formatter_process.returncode}")
-
-        return docstring_formatter_process.returncode
+        return run(self.name, directory, args)
 
     def check(self):
         directory = self._path.resolve()
@@ -104,14 +131,46 @@ class DocStringFormatter(Linter):
             *self._args,
         ]
 
-        logger.debug(f"Running check docstring_formatter: {args}")
+        run(self.name + " check", directory, args)
 
-        docstring_formatter_process = subprocess.Popen(args, cwd=directory)
-        docstring_formatter_process.communicate()
 
-        logger.debug(f"Return code: {docstring_formatter_process.returncode}")
+class Flake8(Linter):
+    name: str = "flake8"
+    parallel_run: bool = False
 
-        return docstring_formatter_process.returncode
+    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
+        no_max_comp = True
+        no_max_line = True
+        if args is None:
+            args = []
+
+        for arg in args:
+            if "--max-complexity" in arg:
+                no_max_comp = False
+            if "--max-line-length" in arg:
+                no_max_line = False
+
+        if no_max_comp is True:
+            args.append("--max-complexity=10")
+        if no_max_line is True:
+            args.append("--max-line-length=120")
+
+        args.append("--ignore=E203")
+
+        super().__init__(path, args)
+
+    def run(self):
+        directory = self._path.resolve()
+        args = [
+            "flake8",
+            directory,
+            *self._args,
+        ]
+
+        return run(self.name, directory, args)
+
+    def check(self):
+        self.run()
 
 
 class ISort(Linter):
@@ -128,14 +187,7 @@ class ISort(Linter):
             directory,
             *self._args,
         ]
-        logger.debug(f"Running isort: {args}")
-
-        isort_process = subprocess.Popen(args, cwd=directory)
-        isort_process.communicate()
-
-        logger.debug(f"Return code: {isort_process.returncode}")
-
-        return isort_process.returncode
+        return run(self.name, directory, args)
 
     def check(self):
         directory = self._path.resolve()
@@ -145,13 +197,35 @@ class ISort(Linter):
             directory,
             *self._args,
         ]
-        logger.debug(f"Running check isort: {args}")
-        isort_process = subprocess.Popen(args, cwd=directory)
-        isort_process.communicate()
+        return run(self.name + " check", directory, args)
 
-        logger.debug(f"Return code: {isort_process.returncode}")
 
-        return isort_process.returncode
+class Mccabe(Linter):
+    """
+    Flake8 runs Mccabe.
+
+    Only use this if you do not also run Flake8
+    """
+
+    name: str = "mccabe"
+    parallel_run: bool = True
+
+    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
+        super().__init__(path, args)
+
+    def run(self):
+        directory = self._path.resolve()
+        args = [
+            "python",
+            "-m",
+            "mccabe",
+            directory,
+            *self._args,
+        ]
+        return run(self.name, directory, args)
+
+    def check(self):
+        self.run()
 
 
 class Mypy(Linter):
@@ -168,14 +242,7 @@ class Mypy(Linter):
             directory,
             *self._args,
         ]
-        logger.debug(f"Running mypy: {args}")
-
-        mypy_process = subprocess.Popen(args, cwd=directory)
-        mypy_process.communicate()
-
-        logger.debug(f"Return code: {mypy_process.returncode}")
-
-        return mypy_process.returncode
+        return run(self.name, directory, args)
 
     def check(self):
         return self.run()
@@ -195,20 +262,19 @@ class Pydocstyle(Linter):
             directory,
             *self._args,
         ]
-        logger.debug(f"Running pydocstyle: {args}")
-
-        pydocstyle_process = subprocess.Popen(args, cwd=directory)
-        pydocstyle_process.communicate()
-
-        logger.debug(f"Return code: {pydocstyle_process.returncode}")
-
-        return pydocstyle_process.returncode
+        return run(self.name, directory, args)
 
     def check(self):
         return self.run()
 
 
 class Pyflakes(Linter):
+    """
+    Flake8 runs pyflakes.
+
+    Only use this if you do not also run Flake8
+    """
+
     name: str = "pyflakes"
     parallel_run: bool = True
 
@@ -222,14 +288,7 @@ class Pyflakes(Linter):
             directory,
             *self._args,
         ]
-        logger.debug(f"Running pyflakes: {args}")
-
-        pyflakes_process = subprocess.Popen(args, cwd=directory)
-        pyflakes_process.communicate()
-
-        logger.debug(f"Return code: {pyflakes_process.returncode}")
-
-        return pyflakes_process.returncode
+        return run(self.name, directory, args)
 
     def check(self):
         return self.run()
@@ -249,42 +308,7 @@ class Pylint(Linter):
             directory,
             *self._args,
         ]
-        logger.debug(f"Running pylint: {args}")
-
-        pylint_process = subprocess.Popen(args, cwd=directory)
-        pylint_process.communicate()
-
-        logger.debug(f"Return code: {pylint_process.returncode}")
-
-        return pylint_process.returncode
-
-    def check(self):
-        return self.run()
-
-
-class Bandit(Linter):
-    name: str = "bandit"
-    parallel_run: bool = True
-
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
-
-    def run(self):
-        directory = self._path.resolve()
-        args = [
-            "bandit",
-            "-r",
-            directory,
-            *self._args,
-        ]
-        logger.debug(f"Running bandit: {args}")
-
-        bandit_process = subprocess.Popen(args, cwd=directory)
-        bandit_process.communicate()
-
-        logger.debug(f"Return code: {bandit_process.returncode}")
-
-        return bandit_process.returncode
+        return run(self.name, directory, args)
 
     def check(self):
         return self.run()
