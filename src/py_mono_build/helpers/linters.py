@@ -16,21 +16,21 @@ tflint
 terrascan
 """
 
-black = "\x1b[30m"
-red = "\x1b[31m"
-green = "\x1b[32m"
-yellow = "\x1b[33m"
-blue = "\x1b[34m"
-magenta = "\x1b[35m"
-cyan = "\x1b[36m"
-white = "\x1b[37m"
-reset = "\x1b[0m"
+BLACK = "\x1b[30m"
+RED = "\x1b[31m"
+GREEN = "\x1b[32m"
+YELLOW = "\x1b[33m"
+BLUE = "\x1b[34m"
+MAGENTA = "\x1b[35m"
+CYAN = "\x1b[36m"
+WHITE = "\x1b[37m"
+RESET = "\x1b[0m"
 
 
-def run(linter: str, directory: Path, args: t.Optional[t.List[str]] = None) -> int:
+def run(linter: str, directory: Path, args: t.List[str]) -> int:
     log_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
 
-    logger.debug(f"Running {linter}: {args}")
+    logger.debug("Running %s: %s", linter, args)
 
     logs = log_format.format(linter + " start")
 
@@ -44,16 +44,16 @@ def run(linter: str, directory: Path, args: t.Optional[t.List[str]] = None) -> i
     stdout_data, stderr_data = process.communicate()
 
     if process.returncode != 0:
-        logs += red
+        logs += RED
     else:
-        logs += green
+        logs += GREEN
 
     logs += stdout_data.decode("utf-8")
     logs += stderr_data.decode("utf-8")
 
-    logger.debug(f"{linter} return code: {process.returncode}")
+    logger.debug("%s return code: %s", linter, process.returncode)
 
-    logs += reset
+    logs += RESET
     logs += log_format.format(linter + " end")
 
     logger.info(logs)
@@ -63,9 +63,6 @@ def run(linter: str, directory: Path, args: t.Optional[t.List[str]] = None) -> i
 class Bandit(Linter):
     name: str = "bandit"
     parallel_run: bool = True
-
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
 
     def run(self):
         directory = self._path.resolve()
@@ -84,9 +81,6 @@ class Bandit(Linter):
 class Black(Linter):
     name: str = "black"
     parallel_run: bool = False
-
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
 
     def run(self):
         directory = self._path.resolve()
@@ -111,9 +105,6 @@ class Black(Linter):
 class DocStringFormatter(Linter):
     name: str = "docstring_formatter"
     parallel_run: bool = False
-
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
 
     def run(self):
         directory = self._path.resolve()
@@ -180,9 +171,6 @@ class ISort(Linter):
     name: str = "isort"
     parallel_run: bool = False
 
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
-
     def run(self):
         directory = self._path.resolve()
         args = [
@@ -213,9 +201,6 @@ class Mccabe(Linter):
     name: str = "mccabe"
     parallel_run: bool = True
 
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
-
     def run(self):
         directory = self._path.resolve()
         args = [
@@ -235,9 +220,6 @@ class Mypy(Linter):
     name: str = "mypy"
     parallel_run: bool = True
 
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
-
     def run(self):
         directory = self._path.resolve()
         args = [
@@ -254,9 +236,6 @@ class Mypy(Linter):
 class Pydocstyle(Linter):
     name: str = "pydocstyle"
     parallel_run: bool = True
-
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
 
     def run(self):
         directory = self._path.resolve()
@@ -281,9 +260,6 @@ class Pyflakes(Linter):
     name: str = "pyflakes"
     parallel_run: bool = True
 
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
-
     def run(self):
         directory = self._path.resolve()
         args = [
@@ -300,9 +276,6 @@ class Pyflakes(Linter):
 class Pylint(Linter):
     name: str = "pylint"
     parallel_run: bool = True
-
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
-        super().__init__(path, args)
 
     def run(self):
         directory = self._path.resolve()

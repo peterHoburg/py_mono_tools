@@ -18,13 +18,13 @@ logger = logging.getLogger(__name__)
 logger.debug("Starting main")
 
 EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
-logger.debug(f"Executed from: {EXECUTED_FROM}")
+logger.debug("Executed from: %s", EXECUTED_FROM)
 
 CURRENT_BUILD_SYSTEM: t.Optional[BuildSystem] = None
-logger.debug(f"Current build system: {CURRENT_BUILD_SYSTEM}")
+logger.debug("Current build system: %s", CURRENT_BUILD_SYSTEM)
 
-BUILD_SYSTEMS: t.Dict[str, BuildSystem] = {Docker.name: Docker}
-logger.debug(f"Build systems: {BUILD_SYSTEMS}")
+BUILD_SYSTEMS: t.Dict[str, t.Type[BuildSystem]] = {Docker.name: Docker}
+logger.debug("Build systems: %s", BUILD_SYSTEMS)
 
 
 @click.group()
@@ -42,16 +42,16 @@ def cli(build_system, absolute_path, relative_path):
     _init_build_system(build_system)
 
 
-def _set_absolute_path(absolute_path: t.Optional[str] = None):
-    logger.info(f"Overwriting execution root path: {absolute_path}")
+def _set_absolute_path(absolute_path: str):
+    logger.info("Overwriting execution root path: %s", absolute_path)
     global EXECUTED_FROM
 
     EXECUTED_FROM = pathlib.Path(absolute_path)
     os.chdir(EXECUTED_FROM.resolve())
 
 
-def _set_relative_path(relative_path: t.Optional[str] = None):
-    logger.info(f"Overwriting execution root path: {relative_path}")
+def _set_relative_path(relative_path: str):
+    logger.info("Overwriting execution root path: %s", relative_path)
     global EXECUTED_FROM
 
     EXECUTED_FROM = EXECUTED_FROM.joinpath(pathlib.Path(relative_path))
@@ -59,7 +59,7 @@ def _set_relative_path(relative_path: t.Optional[str] = None):
 
 
 def _init_build_system(_build_system: str):
-    logger.debug(f"Initializing build system: {_build_system}")
+    logger.debug("Initializing build system: %s", _build_system)
     global CURRENT_BUILD_SYSTEM
 
     CURRENT_BUILD_SYSTEM = BUILD_SYSTEMS[_build_system](
@@ -76,12 +76,12 @@ def build(force_rebuild, modules):
 
 @cli.command()
 def deploy():
-    pass
+    raise NotImplementedError
 
 
 @cli.command()
 def init():
-    pass
+    raise NotImplementedError
 
 
 @cli.command()
@@ -90,18 +90,18 @@ def lint(check: bool):
     logger.info("Starting lint")
 
     conf_location = f"{EXECUTED_FROM}/CONF"
-    logger.debug(f"CONF location: {conf_location}")
+    logger.debug("CONF location: %s", conf_location)
 
     loader = importlib.machinery.SourceFileLoader("CONF", conf_location)
     spec = importlib.util.spec_from_loader(loader.name, loader)
-    mod = importlib.util.module_from_spec(spec)
+    mod = importlib.util.module_from_spec(spec)  # type: ignore
     loader.exec_module(mod)
 
     linters: t.List[Linter] = mod.LINT
-    logger.debug(f"Linters: {linters}")
+    logger.debug("Linters: %s", linters)
 
     for linter in linters:
-        logger.debug(f"Linting: {linter}")
+        logger.debug("Linting: %s", linter)
         if check is True:
             linter.check()
         else:
@@ -112,22 +112,22 @@ def lint(check: bool):
 
 @cli.group()
 def new():
-    pass
+    raise NotImplementedError
 
 
 @new.command()
 def migration():
-    pass
+    raise NotImplementedError
 
 
 @new.command()
 def package():
-    pass
+    raise NotImplementedError
 
 
 @cli.command()
 def run():
-    pass
+    raise NotImplementedError
 
 
 @cli.command()
@@ -137,14 +137,14 @@ def interactive():
 
 @cli.command()
 def setup():
-    pass
+    raise NotImplementedError
 
 
 @cli.command()
 def test():
-    pass
+    raise NotImplementedError
 
 
 @cli.command()
 def validate():
-    pass
+    raise NotImplementedError

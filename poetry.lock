@@ -255,6 +255,7 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 snowballstemmer = "*"
+toml = {version = "*", optional = true, markers = "extra == \"toml\""}
 
 [package.extras]
 toml = ["toml"]
@@ -326,6 +327,14 @@ python-versions = ">=3.8"
 pbr = ">=2.0.0,<2.1.0 || >2.1.0"
 
 [[package]]
+name = "toml"
+version = "0.10.2"
+description = "Python Library for Tom's Obvious, Minimal Language"
+category = "main"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -360,7 +369,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "0110194880757792ec8ecf4c75a755ffafb2aa7dd3bd1f54201d4d7fb53cc385"
+content-hash = "e9336840e95c3175d9f0b1444df0e9354dfe701461492f111e9a0eae5bd19356"
 
 [metadata.files]
 astroid = []
@@ -471,6 +480,7 @@ pyyaml = []
 smmap = []
 snowballstemmer = []
 stevedore = []
+toml = []
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},

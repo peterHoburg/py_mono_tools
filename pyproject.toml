@@ -26,9 +26,8 @@ isort = "^5"
 Jinja2 = "^3"
 mypy = "^0.971"
 pydocstringformatter = "^0.7"
-pydocstyle = "^6"
+pydocstyle = {extras = ["toml"], version = "^6"}
 pylint = "^2"
-tomli = "^2"
 
 
 [tool.poetry.dev-dependencies]
