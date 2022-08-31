@@ -1,11 +1,15 @@
 import os
 import subprocess
+from pathlib import Path
 
 from py_mono_build.interfaces.base_class import BuildSystem
 
 
 class Docker(BuildSystem):
     name: str = "docker"
+
+    def __init__(self, execution_root_path: Path):
+        super().__init__(execution_root_path)
 
     def build(self, force_rebuild: bool = False):
         uid = os.getuid()
@@ -18,6 +22,9 @@ class Docker(BuildSystem):
 
     def run(self, command: str):
         self.build()
+
+    def interactive(self):
+        pass
 
     def shutdown(self):
         self._kill_all_containers()

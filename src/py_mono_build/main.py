@@ -1,3 +1,6 @@
+import importlib
+import importlib.machinery
+import importlib.util
 import os
 import typing as t
 from pathlib import Path
@@ -13,7 +16,7 @@ try:
 except ModuleNotFoundError:
     import tomli as tomllib
 
-EXECUTION_ROOT_PATH: Path = Path(os.getcwd())
+EXECUTED_FROM: Path = Path(os.getcwd())
 CURRENT_BUILD_SYSTEM: t.Optional[BuildSystem] = None
 
 BUILD_SYSTEMS: t.Dict[str, BuildSystem] = {Docker.name: Docker}
@@ -31,16 +34,16 @@ def cli(build_system, execution_root_path):
 
 def _get_execution_root_path(execution_root_path_string: t.Optional[str] = None):
     if execution_root_path_string is not None:
-        global EXECUTION_ROOT_PATH
+        global EXECUTED_FROM
 
-        EXECUTION_ROOT_PATH = Path(execution_root_path_string)
-        os.chdir(EXECUTION_ROOT_PATH.resolve())
+        EXECUTED_FROM = Path(execution_root_path_string)
+        os.chdir(EXECUTED_FROM.resolve())
 
 
 def _init_build_system(_build_system: str):
     global CURRENT_BUILD_SYSTEM
 
-    CURRENT_BUILD_SYSTEM = BUILD_SYSTEMS[_build_system](execution_root_path=EXECUTION_ROOT_PATH)
+    CURRENT_BUILD_SYSTEM = BUILD_SYSTEMS[_build_system](execution_root_path=EXECUTED_FROM)
 
 
 @cli.command()
@@ -67,7 +70,11 @@ def init():
 
 @cli.command()
 def lint():
-    pass
+    loader = importlib.machinery.SourceFileLoader("CONF", f"{EXECUTED_FROM}/CONF")
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    mod = importlib.util.module_from_spec(spec)
+    loader.exec_module(mod)
+    print(mod.NAME)
 
 
 @cli.group()
@@ -88,6 +95,11 @@ def package():
 @cli.command()
 def run():
     pass
+
+
+@cli.command()
+def interactive():
+    CURRENT_BUILD_SYSTEM.interactive()
 
 
 @cli.command()

@@ -1,0 +1,14 @@
+#!/user/bin/env python
+# -*- coding: utf-8 -*-
+import pathlib
+
+from py_mono_build.helpers.linters import Black
+
+
+path = pathlib.Path(__file__).parent
+
+NAME = "<REPLACE ME>"
+
+LINT = [Black(path=path)]
+TEST = []
+DEPLOY = []
