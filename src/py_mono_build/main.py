@@ -23,6 +23,8 @@ BUILD_SYSTEMS: t.Dict[str, t.Type[BuildSystem]] = {Docker.name: Docker}
 def _init_logger(verbose: bool):
     if verbose:
         logger.setLevel(logging.DEBUG)
+        for handler in logger.handlers:
+            handler.setLevel(logging.DEBUG)
 
 
 def _set_absolute_path(absolute_path: str):

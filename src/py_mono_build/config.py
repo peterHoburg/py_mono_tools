@@ -11,16 +11,17 @@ WHITE = "\x1b[37m"
 GRAY = "\x1b[38m"
 RESET = "\x1b[0m"
 
+FORMAT = "%(name)s-(%(filename)s:%(lineno)d)(%(process)d:%(thread)d) - %(levelname)s - %(asctime)s - %(message)s "
 
-class CustomFormatter(logging.Formatter):
-    format = "%(name)s-(%(filename)s:%(lineno)d)(%(process)d:%(thread)d) - %(levelname)s - %(asctime)s - %(message)s "
+
+class ColorFormatting(logging.Formatter):
 
     FORMATS = {
-        logging.DEBUG: GRAY + format + RESET,
-        logging.INFO: GRAY + format + RESET,
-        logging.WARNING: YELLOW + format + RESET,
-        logging.ERROR: RED + format + RESET,
-        logging.CRITICAL: RED + format + RESET,
+        logging.DEBUG: GRAY + FORMAT + RESET,
+        logging.INFO: GRAY + FORMAT + RESET,
+        logging.WARNING: YELLOW + FORMAT + RESET,
+        logging.ERROR: RED + FORMAT + RESET,
+        logging.CRITICAL: RED + FORMAT + RESET,
     }
 
     def format(self, record):
@@ -30,11 +31,9 @@ class CustomFormatter(logging.Formatter):
 
 
 logger = logging.getLogger("PMB")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-
-ch.setFormatter(CustomFormatter())
-
-logger.addHandler(ch)
+stream = logging.StreamHandler()
+stream.setLevel(logging.INFO)
+stream.setFormatter(ColorFormatting())
+logger.addHandler(stream)
