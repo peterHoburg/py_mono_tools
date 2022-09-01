@@ -338,3 +338,49 @@ class CheckOV(Linter):
 
     def check(self):
         return self.run()
+
+
+class Terrascan(Linter):
+    name: str = "terrascan"
+    parallel_run: bool = True
+
+    def run(self):
+        directory = self._path.resolve()
+        args = [
+            "docker",
+            "run",
+            "--rm",
+            "--volume",
+            f"{directory}:/iac",
+            "--workdir",
+            "/iac",
+            "tenable/terrascan",
+            "scan",
+            *self._args,
+        ]
+        return run(self.name, directory, args)
+
+    def check(self):
+        return self.run()
+
+
+class TFLint(Linter):
+    name: str = "tflint"
+    parallel_run: bool = True
+
+    def run(self):
+        directory = self._path.resolve()
+        args = [
+            "docker",
+            "run",
+            "--rm",
+            "-v",
+            f"{directory}:/data",
+            "-t",
+            "ghcr.io/terraform-linters/tflint",
+            *self._args,
+        ]
+        return run(self.name, directory, args)
+
+    def check(self):
+        return self.run()
