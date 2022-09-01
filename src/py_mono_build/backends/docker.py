@@ -2,10 +2,10 @@ import os
 import subprocess  # nosec B404
 import sys
 
-from py_mono_build.interfaces.base_class import BuildSystem
+from py_mono_build.backends.interface import Backend
 
 
-class Docker(BuildSystem):
+class Docker(Backend):
     name: str = "docker"
 
     def build(self, force_rebuild: bool = False):

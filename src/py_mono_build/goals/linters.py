@@ -3,7 +3,7 @@ import typing as t
 from pathlib import Path
 
 from py_mono_build.config import GREEN, logger, RED, RESET
-from py_mono_build.interfaces.base_class import Linter
+from py_mono_build.goals.interface import Linter
 
 
 def run(linter: str, directory: Path, args: t.List[str]) -> int:

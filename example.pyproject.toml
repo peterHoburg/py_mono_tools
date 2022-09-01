@@ -1,3 +1,0 @@
-[tool.mono]
-src_dir = "src"
-build_system = "docker"

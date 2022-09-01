@@ -9,15 +9,16 @@ import typing as t
 
 import click
 
-from py_mono_build.helpers.docker import Docker
-from py_mono_build.interfaces.base_class import BuildSystem, Linter
+from py_mono_build.backends.docker import Docker
+from py_mono_build.goals.interface import Linter
+from py_mono_build.backends.interface import Backend
 from py_mono_build.config import logger
 
 logger.info("Starting main")
 
 EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
-CURRENT_BUILD_SYSTEM: t.Optional[BuildSystem] = None
-BUILD_SYSTEMS: t.Dict[str, t.Type[BuildSystem]] = {Docker.name: Docker}
+CURRENT_BACKEND: t.Optional[Backend] = None
+BACKENDS: t.Dict[str, t.Type[Backend]] = {Docker.name: Docker}
 
 
 def _init_logger(verbose: bool):
@@ -43,36 +44,36 @@ def _set_relative_path(relative_path: str):
     os.chdir(EXECUTED_FROM.resolve())
 
 
-def _init_build_system(_build_system: str):
+def _init_backend(_build_system: str):
     logger.debug("Initializing build system: %s", _build_system)
-    global CURRENT_BUILD_SYSTEM
+    global CURRENT_BACKEND
 
-    CURRENT_BUILD_SYSTEM = BUILD_SYSTEMS[_build_system](
+    CURRENT_BACKEND = BACKENDS[_build_system](
         execution_root_path=EXECUTED_FROM
     )
 
 
 @click.group()
-@click.option("--build_system", default="docker", type=str)
+@click.option("--backend", default="docker", type=str)
 @click.option("--absolute_path", "-ap", default=None, type=click.Path())
 @click.option("--relative_path", "-rp", default=None, type=click.Path())
 @click.option("--verbose", "-v", default=False, is_flag=True)
-def cli(build_system, absolute_path, relative_path, verbose):
+def cli(backend, absolute_path, relative_path, verbose):
     """Py mono build is a CLI tool that simplifies using python in a monorepo."""
     logger.info("Starting cli")
 
     _init_logger(verbose=verbose)
 
     logger.debug("Executed from: %s", EXECUTED_FROM)
-    logger.debug("Current build system: %s", CURRENT_BUILD_SYSTEM)
-    logger.debug("Build systems: %s", BUILD_SYSTEMS)
+    logger.debug("Current backend: %s", CURRENT_BACKEND)
+    logger.debug("Backends: %s", BACKENDS)
 
     if absolute_path is not None:
         _set_absolute_path(absolute_path=absolute_path)
     elif relative_path is not None:
         _set_relative_path(relative_path=relative_path)
 
-    _init_build_system(build_system)
+    _init_backend(backend)
 
 
 @cli.command()
@@ -84,7 +85,7 @@ def build(force_rebuild, modules):
 
     Docker is the default.
     """
-    CURRENT_BUILD_SYSTEM.build(force_rebuild=force_rebuild)
+    CURRENT_BACKEND.build(force_rebuild=force_rebuild)
 
 
 @cli.command()
@@ -167,8 +168,8 @@ def run():
 
 @cli.command()
 def interactive():
-    """Drop into an interactive session in your specified build system."""
-    CURRENT_BUILD_SYSTEM.interactive()
+    """Drop into an interactive session in your specified backend."""
+    raise NotImplementedError
 
 
 @cli.command()

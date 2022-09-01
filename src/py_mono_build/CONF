@@ -2,19 +2,15 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_build.helpers.linters import (
+from py_mono_build.goals.linters import (
     Bandit,
     Black,
-    CheckOV,
     DocStringFormatter,
     Flake8,
     ISort,
     Mypy,
     Pydocstyle,
     Pylint,
-    Terrascan,
-    TFLint,
-    TFSec,
 )
 
 
