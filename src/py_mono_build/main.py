@@ -103,9 +103,10 @@ def lint(check: bool):
     for linter in linters:
         logger.debug("Linting: %s", linter)
         if check is True:
-            linter.check()
+            result = linter.check()
         else:
-            linter.run()
+            result = linter.run()
+        logger.info("Lint result: %s %s", linter.name, result)
 
     logger.info("Linting complete")
 

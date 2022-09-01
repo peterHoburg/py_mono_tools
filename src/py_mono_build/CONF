@@ -2,7 +2,18 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_build.helpers.linters import Bandit, Black, DocStringFormatter, Flake8, ISort, Mypy, Pydocstyle, Pylint
+from py_mono_build.helpers.linters import (
+    Bandit,
+    Black,
+    CheckOV,
+    DocStringFormatter,
+    Flake8,
+    ISort,
+    Mypy,
+    Pydocstyle,
+    Pylint,
+    TFSec,
+)
 
 
 path = pathlib.Path(__file__).parent
@@ -18,6 +29,8 @@ LINT = [
     Mypy(path=path),
     Pydocstyle(path=path),
     Pylint(path=path),
+    TFSec(path=path),
+    CheckOV(path=path),
 ]
 TEST = []
 DEPLOY = []

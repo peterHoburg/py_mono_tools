@@ -288,3 +288,53 @@ class Pylint(Linter):
 
     def check(self):
         return self.run()
+
+
+class TFSec(Linter):
+    name: str = "tfsec"
+    parallel_run: bool = True
+
+    def run(self):
+        directory = self._path.resolve()
+        print(directory)
+        args = [
+            "docker",
+            "run",
+            "--rm",
+            "-it",
+            "-v",
+            f"{directory}:/src",
+            "aquasec/tfsec",
+            "/src",
+            *self._args,
+        ]
+        return run(self.name, directory, args)
+
+    def check(self):
+        return self.run()
+
+
+class CheckOV(Linter):
+    name: str = "checkov"
+    parallel_run: bool = True
+
+    def run(self):
+        directory = self._path.resolve()
+        args = [
+            "docker",
+            "run",
+            "--tty",
+            "--rm",
+            "--volume",
+            f"{directory}:/tf",
+            "--workdir",
+            "/tf",
+            "bridgecrew/checkov",
+            "--directory",
+            "/tf",
+            *self._args,
+        ]
+        return run(self.name, directory, args)
+
+    def check(self):
+        return self.run()
