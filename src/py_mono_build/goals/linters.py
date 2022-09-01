@@ -1,42 +1,32 @@
-import subprocess  # nosec B404
 import typing as t
-from pathlib import Path
 
-from py_mono_build.config import GREEN, logger, RED, RESET
+from py_mono_build.config import consts, GREEN, logger, RED, RESET
 from py_mono_build.goals.interface import Linter
 
 
-def run(linter: str, directory: Path, args: t.List[str]) -> int:
+def _run(linter: str, args: t.List[str]) -> int:
     log_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
 
     logger.debug("Running %s: %s", linter, args)
 
     logs = log_format.format(linter + " start")
 
-    process = subprocess.Popen(  # nosec B603
-        args,
-        cwd=directory,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
+    return_code, returned_logs = consts.CURRENT_BACKEND.run(args)
 
-    stdout_data, stderr_data = process.communicate()
-
-    if process.returncode != 0:
+    if return_code != 0:
         logs += RED
     else:
         logs += GREEN
 
-    logs += stdout_data.decode("utf-8")
-    logs += stderr_data.decode("utf-8")
+    logs = logs + returned_logs
 
-    logger.debug("%s return code: %s", linter, process.returncode)
+    logger.debug("%s return code: %s", linter, return_code)
 
     logs += RESET
     logs += log_format.format(linter + " end")
 
     logger.info(logs)
-    return process.returncode
+    return return_code
 
 
 class Bandit(Linter):
@@ -44,14 +34,13 @@ class Bandit(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "bandit",
             "-r",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()
@@ -62,23 +51,21 @@ class Black(Linter):
     parallel_run: bool = False
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "black",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
-        directory = self._path.resolve()
         args = [
             "black",
             "--check",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name + " check", directory, args)
+        return _run(self.name + " check", args)
 
 
 class DocStringFormatter(Linter):
@@ -86,32 +73,30 @@ class DocStringFormatter(Linter):
     parallel_run: bool = False
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "pydocstringformatter",
             "-w",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
 
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
-        directory = self._path.resolve()
         args = [
             "pydocstringformatter",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
 
-        run(self.name + " check", directory, args)
+        _run(self.name + " check", args)
 
 
 class Flake8(Linter):
     name: str = "flake8"
     parallel_run: bool = False
 
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
+    def __init__(self, args: t.Optional[t.List[str]] = None):
         no_max_comp = True
         no_max_line = True
         if args is None:
@@ -130,17 +115,16 @@ class Flake8(Linter):
 
         args.append("--ignore=E203")
 
-        super().__init__(path, args)
+        super().__init__(args)
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "flake8",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
 
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         self.run()
@@ -151,23 +135,21 @@ class ISort(Linter):
     parallel_run: bool = False
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "isort",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
-        directory = self._path.resolve()
         args = [
             "isort",
             "-c",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name + " check", directory, args)
+        return _run(self.name + " check", args)
 
 
 class Mccabe(Linter):
@@ -181,15 +163,14 @@ class Mccabe(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "python",
             "-m",
             "mccabe",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         self.run()
@@ -200,13 +181,12 @@ class Mypy(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "mypy",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()
@@ -217,13 +197,12 @@ class Pydocstyle(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "pydocstyle",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()
@@ -240,13 +219,12 @@ class Pyflakes(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "pyflakes",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()
@@ -257,13 +235,12 @@ class Pylint(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "pylint",
-            directory,
+            consts.EXECUTED_FROM,
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()
@@ -274,20 +251,18 @@ class TFSec(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
-        print(directory)
         args = [
             "docker",
             "run",
             "--rm",
             "-it",
             "-v",
-            f"{directory}:/src",
+            f"{consts.EXECUTED_FROM}:/src",
             "aquasec/tfsec",
             "/src",
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()
@@ -298,14 +273,13 @@ class CheckOV(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "docker",
             "run",
             "--tty",
             "--rm",
             "--volume",
-            f"{directory}:/tf",
+            f"{consts.EXECUTED_FROM}:/tf",
             "--workdir",
             "/tf",
             "bridgecrew/checkov",
@@ -313,7 +287,7 @@ class CheckOV(Linter):
             "/tf",
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()
@@ -324,20 +298,19 @@ class Terrascan(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "docker",
             "run",
             "--rm",
             "--volume",
-            f"{directory}:/iac",
+            f"{consts.EXECUTED_FROM}:/iac",
             "--workdir",
             "/iac",
             "tenable/terrascan",
             "scan",
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()
@@ -348,18 +321,17 @@ class TFLint(Linter):
     parallel_run: bool = True
 
     def run(self):
-        directory = self._path.resolve()
         args = [
             "docker",
             "run",
             "--rm",
             "-v",
-            f"{directory}:/data",
+            f"{consts.EXECUTED_FROM}:/data",
             "-t",
             "ghcr.io/terraform-linters/tflint",
             *self._args,
         ]
-        return run(self.name, directory, args)
+        return _run(self.name, args)
 
     def check(self):
         return self.run()

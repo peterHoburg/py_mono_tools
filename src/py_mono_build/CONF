@@ -19,18 +19,18 @@ path = pathlib.Path(__file__).parent
 NAME = "py_mono_build"
 
 LINT = [
-    Bandit(path=path),
-    Black(path=path),
-    DocStringFormatter(path=path),
-    Flake8(path=path),
-    ISort(path=path),
-    Mypy(path=path),
-    Pydocstyle(path=path),
-    Pylint(path=path),
-    # TFSec(path=path),
-    # CheckOV(path=path),
-    # Terrascan(path=path, args=["-d", "./terraform"]),
-    # TFLint(path=path, args=["./terraform/services/aws/modules/networking"]),
+    Bandit(),
+    Black(),
+    DocStringFormatter(),
+    Flake8(),
+    ISort(),
+    Mypy(),
+    Pydocstyle(),
+    Pylint(),
+    # TFSec(),
+    # CheckOV(),
+    # Terrascan( args=["-d", "./terraform"]),
+    # TFLint( args=["./terraform/services/aws/modules/networking"]),
 ]
 TEST = []
 DEPLOY = []

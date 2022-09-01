@@ -1,16 +1,14 @@
 import abc
 import typing as t
-from pathlib import Path
 
 
 class Linter(abc.ABC):
     name: str
     parallel_run: bool
 
-    def __init__(self, path: Path, args: t.Optional[t.List[str]] = None):
+    def __init__(self, args: t.Optional[t.List[str]] = None):
         if args is None:
             args = []
-        self._path = path
         self._args = args
 
     @abc.abstractmethod

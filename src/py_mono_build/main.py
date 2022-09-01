@@ -9,16 +9,10 @@ import typing as t
 
 import click
 
-from py_mono_build.backends.docker import Docker
 from py_mono_build.goals.interface import Linter
-from py_mono_build.backends.interface import Backend
-from py_mono_build.config import logger
+from py_mono_build.config import consts, logger
 
 logger.info("Starting main")
-
-EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
-CURRENT_BACKEND: t.Optional[Backend] = None
-BACKENDS: t.Dict[str, t.Type[Backend]] = {Docker.name: Docker}
 
 
 def _init_logger(verbose: bool):
@@ -30,31 +24,30 @@ def _init_logger(verbose: bool):
 
 def _set_absolute_path(absolute_path: str):
     logger.info("Overwriting execution root path: %s", absolute_path)
-    global EXECUTED_FROM
 
-    EXECUTED_FROM = pathlib.Path(absolute_path)
-    os.chdir(EXECUTED_FROM.resolve())
+    consts.EXECUTED_FROM = pathlib.Path(absolute_path).resolve()
+    os.chdir(consts.EXECUTED_FROM.resolve())
 
 
 def _set_relative_path(relative_path: str):
     logger.info("Overwriting execution root path: %s", relative_path)
-    global EXECUTED_FROM
 
-    EXECUTED_FROM = EXECUTED_FROM.joinpath(pathlib.Path(relative_path))
-    os.chdir(EXECUTED_FROM.resolve())
+    consts.EXECUTED_FROM = consts.EXECUTED_FROM.joinpath(
+        pathlib.Path(relative_path).resolve()
+    )
+    os.chdir(consts.EXECUTED_FROM)
 
 
 def _init_backend(_build_system: str):
     logger.debug("Initializing build system: %s", _build_system)
-    global CURRENT_BACKEND
 
-    CURRENT_BACKEND = BACKENDS[_build_system](
-        execution_root_path=EXECUTED_FROM
+    consts.CURRENT_BACKEND = consts.BACKENDS[_build_system](
+        execution_root_path=consts.EXECUTED_FROM
     )
 
 
 @click.group()
-@click.option("--backend", default="docker", type=str)
+@click.option("--backend", default="system", type=str)
 @click.option("--absolute_path", "-ap", default=None, type=click.Path())
 @click.option("--relative_path", "-rp", default=None, type=click.Path())
 @click.option("--verbose", "-v", default=False, is_flag=True)
@@ -64,9 +57,9 @@ def cli(backend, absolute_path, relative_path, verbose):
 
     _init_logger(verbose=verbose)
 
-    logger.debug("Executed from: %s", EXECUTED_FROM)
-    logger.debug("Current backend: %s", CURRENT_BACKEND)
-    logger.debug("Backends: %s", BACKENDS)
+    logger.debug("Executed from: %s", consts.EXECUTED_FROM)
+    logger.debug("Current backend: %s", consts.CURRENT_BACKEND)
+    logger.debug("Backends: %s", consts.BACKENDS)
 
     if absolute_path is not None:
         _set_absolute_path(absolute_path=absolute_path)
@@ -113,7 +106,7 @@ def lint(check: bool, specific: t.List[str]):
     """Run one or more Linters specified in the CONF file."""
     logger.info("Starting lint")
 
-    conf_location = f"{EXECUTED_FROM}/CONF"
+    conf_location = f"{consts.EXECUTED_FROM}/CONF"
     logger.debug("CONF location: %s", conf_location)
 
     loader = importlib.machinery.SourceFileLoader("CONF", conf_location)

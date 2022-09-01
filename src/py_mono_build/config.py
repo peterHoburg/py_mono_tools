@@ -1,4 +1,19 @@
 import logging
+import os
+import pathlib
+import typing as t
+
+from py_mono_build.backends import Docker, System
+from py_mono_build.backends.interface import Backend
+
+
+class Consts:
+    EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
+    CURRENT_BACKEND: t.Optional[Backend] = None
+    BACKENDS: t.Dict[str, t.Type[Backend]] = {Docker.name: Docker, System.name: System}
+
+
+consts = Consts()
 
 BLACK = "\x1b[30m"
 RED = "\x1b[31m"

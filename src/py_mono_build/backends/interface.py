@@ -1,5 +1,6 @@
 import abc
 from pathlib import Path
+import typing as t
 
 
 class Backend(abc.ABC):
@@ -17,7 +18,7 @@ class Backend(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def run(self, command: str):
+    def run(self, command: str) -> t.Tuple[int, str]:
         raise NotImplementedError
 
     @abc.abstractmethod
