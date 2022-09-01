@@ -31,10 +31,10 @@ LINT = [
     Mypy(path=path),
     Pydocstyle(path=path),
     Pylint(path=path),
-    TFSec(path=path),
-    CheckOV(path=path),
-    Terrascan(path=path, args=["-d", "./terraform"]),
-    TFLint(path=path, args=["./terraform/services/aws/modules/networking"]),
+    # TFSec(path=path),
+    # CheckOV(path=path),
+    # Terrascan(path=path, args=["-d", "./terraform"]),
+    # TFLint(path=path, args=["./terraform/services/aws/modules/networking"]),
 ]
 TEST = []
 DEPLOY = []

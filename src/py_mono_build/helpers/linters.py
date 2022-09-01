@@ -9,12 +9,6 @@ from py_mono_build.interfaces.base_class import Linter
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-"""
-Radon.
-
-tflint
-terrascan
-"""
 
 BLACK = "\x1b[30m"
 RED = "\x1b[31m"
@@ -103,7 +97,7 @@ class Black(Linter):
 
 
 class DocStringFormatter(Linter):
-    name: str = "docstring_formatter"
+    name: str = "doc_string_formatter"
     parallel_run: bool = False
 
     def run(self):
