@@ -12,9 +12,9 @@ class System(Backend):
     def purge(self):
         raise NotImplementedError
 
-    def run(self, command: str):
+    def run(self, args: str):
         process = subprocess.Popen(  # nosec B603
-            command,
+            args,
             cwd=self._root_path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

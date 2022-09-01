@@ -1,8 +1,10 @@
 import os
 import subprocess  # nosec B404
 import sys
+import typing as t
 
 from py_mono_build.backends.interface import Backend
+from py_mono_build.config import logger
 
 
 class Docker(Backend):
@@ -12,13 +14,38 @@ class Docker(Backend):
         uid = os.getuid()
 
         self.shutdown()
-        self._build(uid, "amirainvest_com")
+        self._build(uid)
 
     def purge(self):
         raise NotImplementedError
 
-    def run(self, command: str):
+    def run(self, args: t.List[str]):
+        command = ""
+        for arg in args:
+            command += f"{arg} "
+
+        logger.info("running command: %s", command)
+
         self.build()
+        process = subprocess.Popen(  # nosec B603
+            f"docker run -it pmb_docker_backend {command}",
+            # args,
+            shell=True,
+            cwd=self._root_path,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+
+        stdout_data, stderr_data = process.communicate()
+        return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode(
+            "utf-8"
+        )
+
+        subprocess.check_output(  # nosec B603
+            f"docker run -it pmb_docker_backend {command}",
+            shell=True,
+            cwd=self._root_path,
+        )
 
     def interactive(self):
         raise NotImplementedError
@@ -26,15 +53,14 @@ class Docker(Backend):
     def shutdown(self):
         self._kill_all_containers()
 
-    def _build(self, uid: int, target: str):
+    def _build(self, uid: int):
         subprocess.check_output(  # nosec B603
-            f"DOCKER_BUILDKIT=1 "
-            f"BUILDKIT_PROGRESS=plain "
-            f"docker-compose build "
-            f"--build-arg USER_UID={uid} "
-            f"--progress plain "
-            f"{target}",
-            # shell=True,
+            "docker "
+            "build "
+            "-t "
+            "pmb_docker_backend "
+            ".",
+            shell=True,
             cwd=self._root_path,
         )
 
@@ -42,12 +68,12 @@ class Docker(Backend):
         try:
             subprocess.check_output(  # nosec B607 B603
                 "docker ps -q | xargs -r docker kill",
-                # shell=True,
+                shell=True,
                 cwd=self._root_path,
             )
-            subprocess.check_output(  # nosec B607 B603
-                ["docker-compose", "down", "--remove-orphans"],
-                cwd=self._root_path,
-            )
+            # subprocess.check_output(  # nosec B607 B603
+            #     ["docker-compose", "down", "--remove-orphans"],
+            #     cwd=self._root_path,
+            # )
         except subprocess.CalledProcessError:
             sys.exit(1)

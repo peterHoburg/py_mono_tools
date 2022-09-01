@@ -11,9 +11,20 @@ import click
 
 from py_mono_build.goals.interface import Linter
 from py_mono_build.config import consts, logger
+from py_mono_build.backends import Docker, System
 
 logger.info("Starting main")
 
+def _load_conf():
+    conf_location = f"{consts.EXECUTED_FROM}/CONF"
+    logger.debug("CONF location: %s", conf_location)
+
+    loader = importlib.machinery.SourceFileLoader("CONF", conf_location)
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    mod = importlib.util.module_from_spec(spec)  # type: ignore
+    loader.exec_module(mod)
+
+    consts.CONF = mod
 
 def _init_logger(verbose: bool):
     if verbose:
@@ -41,6 +52,8 @@ def _set_relative_path(relative_path: str):
 def _init_backend(_build_system: str):
     logger.debug("Initializing build system: %s", _build_system)
 
+    consts.BACKENDS = {Docker.name: Docker, System.name: System}
+
     consts.CURRENT_BACKEND = consts.BACKENDS[_build_system](
         execution_root_path=consts.EXECUTED_FROM
     )
@@ -66,6 +79,7 @@ def cli(backend, absolute_path, relative_path, verbose):
     elif relative_path is not None:
         _set_relative_path(relative_path=relative_path)
 
+    _load_conf()
     _init_backend(backend)
 
 
@@ -78,7 +92,7 @@ def build(force_rebuild, modules):
 
     Docker is the default.
     """
-    CURRENT_BACKEND.build(force_rebuild=force_rebuild)
+    consts.CURRENT_BACKEND.build(force_rebuild=force_rebuild)
 
 
 @cli.command()
@@ -106,15 +120,7 @@ def lint(check: bool, specific: t.List[str]):
     """Run one or more Linters specified in the CONF file."""
     logger.info("Starting lint")
 
-    conf_location = f"{consts.EXECUTED_FROM}/CONF"
-    logger.debug("CONF location: %s", conf_location)
-
-    loader = importlib.machinery.SourceFileLoader("CONF", conf_location)
-    spec = importlib.util.spec_from_loader(loader.name, loader)
-    mod = importlib.util.module_from_spec(spec)  # type: ignore
-    loader.exec_module(mod)
-
-    linters: t.List[Linter] = mod.LINT
+    linters: t.List[Linter] = consts.CONF.LINT
     logger.debug("Linters: %s", linters)
 
     cleaned_spec = []

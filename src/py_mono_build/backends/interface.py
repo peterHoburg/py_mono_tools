@@ -18,7 +18,7 @@ class Backend(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def run(self, command: str) -> t.Tuple[int, str]:
+    def run(self, args: t.List[str]) -> t.Tuple[int, str]:
         raise NotImplementedError
 
     @abc.abstractmethod
