@@ -1,24 +1,9 @@
-import logging
 import subprocess  # nosec B404
 import typing as t
 from pathlib import Path
 
+from py_mono_build.config import GREEN, logger, RED, RESET
 from py_mono_build.interfaces.base_class import Linter
-
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
-BLACK = "\x1b[30m"
-RED = "\x1b[31m"
-GREEN = "\x1b[32m"
-YELLOW = "\x1b[33m"
-BLUE = "\x1b[34m"
-MAGENTA = "\x1b[35m"
-CYAN = "\x1b[36m"
-WHITE = "\x1b[37m"
-RESET = "\x1b[0m"
 
 
 def run(linter: str, directory: Path, args: t.List[str]) -> int:

@@ -11,37 +11,18 @@ import click
 
 from py_mono_build.helpers.docker import Docker
 from py_mono_build.interfaces.base_class import BuildSystem, Linter
+from py_mono_build.config import logger
 
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
-logger.debug("Starting main")
+logger.info("Starting main")
 
 EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
-logger.debug("Executed from: %s", EXECUTED_FROM)
-
 CURRENT_BUILD_SYSTEM: t.Optional[BuildSystem] = None
-logger.debug("Current build system: %s", CURRENT_BUILD_SYSTEM)
-
 BUILD_SYSTEMS: t.Dict[str, t.Type[BuildSystem]] = {Docker.name: Docker}
-logger.debug("Build systems: %s", BUILD_SYSTEMS)
 
 
-@click.group()
-@click.option("--build_system", default="docker", type=str)
-@click.option("--absolute_path", "-ap", default=None, type=click.Path())
-@click.option("--relative_path", "-rp", default=None, type=click.Path())
-def cli(build_system, absolute_path, relative_path):
-    """Py mono build is a CLI tool that simplifies using python in a monorepo."""
-    logger.debug("Starting cli")
-
-    if absolute_path is not None:
-        _set_absolute_path(absolute_path=absolute_path)
-    elif relative_path is not None:
-        _set_relative_path(relative_path=relative_path)
-
-    _init_build_system(build_system)
+def _init_logger(verbose: bool):
+    if verbose:
+        logger.setLevel(logging.DEBUG)
 
 
 def _set_absolute_path(absolute_path: str):
@@ -67,6 +48,29 @@ def _init_build_system(_build_system: str):
     CURRENT_BUILD_SYSTEM = BUILD_SYSTEMS[_build_system](
         execution_root_path=EXECUTED_FROM
     )
+
+
+@click.group()
+@click.option("--build_system", default="docker", type=str)
+@click.option("--absolute_path", "-ap", default=None, type=click.Path())
+@click.option("--relative_path", "-rp", default=None, type=click.Path())
+@click.option("--verbose", "-v", default=False, is_flag=True)
+def cli(build_system, absolute_path, relative_path, verbose):
+    """Py mono build is a CLI tool that simplifies using python in a monorepo."""
+    logger.info("Starting cli")
+
+    _init_logger(verbose=verbose)
+
+    logger.debug("Executed from: %s", EXECUTED_FROM)
+    logger.debug("Current build system: %s", CURRENT_BUILD_SYSTEM)
+    logger.debug("Build systems: %s", BUILD_SYSTEMS)
+
+    if absolute_path is not None:
+        _set_absolute_path(absolute_path=absolute_path)
+    elif relative_path is not None:
+        _set_relative_path(relative_path=relative_path)
+
+    _init_build_system(build_system)
 
 
 @cli.command()
