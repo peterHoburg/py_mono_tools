@@ -104,6 +104,11 @@ class PyDocStringFormatter(Linter):
     parallel_run: bool = False
 
     def run(self):
+        """
+        Will run the pydocstringformatter linter.
+
+        NOTE: This WILL modify your files.
+        """
         args = [
             "pydocstringformatter",
             "-w",
@@ -114,6 +119,11 @@ class PyDocStringFormatter(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """
+        Will run the pydocstringformatter linter in check mode.
+
+        NOTE: This will NOT modify your files.
+        """
         args = [
             "pydocstringformatter",
             consts.EXECUTED_FROM,
@@ -124,10 +134,25 @@ class PyDocStringFormatter(Linter):
 
 
 class Flake8(Linter):
+    """
+    Flake8 linter.
+
+    Style checker for Python code.
+
+    Flake8 runs: pycodestyle, pyflakes, and mccabe
+    https://flake8.pycqa.org/en/latest/faq.html#why-does-flake8-use-ranges-for-its-dependencies
+
+    WARNING: Flake8 must be run with the SAME version of python that your code will run on!
+
+    The default max complexity is 10.
+    The default max line length is 120.
+    """
+
     name: str = "flake8"
     parallel_run: bool = False
 
     def __init__(self, args: t.Optional[t.List[str]] = None):
+        """Will set the max complexity and max line length."""
         no_max_comp = True
         no_max_line = True
         if args is None:
@@ -149,6 +174,7 @@ class Flake8(Linter):
         super().__init__(args)
 
     def run(self):
+        """Will run the flake8 linter."""
         args = [
             "flake8",
             consts.EXECUTED_FROM,
@@ -158,6 +184,7 @@ class Flake8(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the flake8 linter."""
         self.run()
 
 

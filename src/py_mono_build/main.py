@@ -16,11 +16,10 @@ from py_mono_build.goals.interface import Linter
 
 logger.info("Starting main")
 
-"""
-Dir command was run from.
-
-dir passed to command
-"""
+# TODO have parallel option
+# TODO add weight to linters
+# TODO run parallel false first by default.
+# TODO add shell auto completion for linters: https://click.palletsprojects.com/en/8.1.x/shell-completion/
 
 
 def _load_conf():
