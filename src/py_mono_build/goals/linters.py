@@ -189,10 +189,25 @@ class Flake8(Linter):
 
 
 class ISort(Linter):
+    """
+    ISort linter.
+
+    Sorts python imports.
+
+    https://pycqa.github.io/isort/
+
+    NOTE: Isort run WILL modify your files.
+    """
+
     name: str = "isort"
     parallel_run: bool = False
 
     def run(self):
+        """
+        Will run the isort linter.
+
+        NOTE: This WILL modify your files.
+        """
         args = [
             "isort",
             consts.EXECUTED_FROM,
@@ -201,6 +216,11 @@ class ISort(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """
+        Will run the isort linter in check mode.
+
+        Note: This will NOT modify your files.
+        """
         args = [
             "isort",
             "-c",
@@ -221,6 +241,7 @@ class Mccabe(Linter):
     parallel_run: bool = True
 
     def run(self):
+        """Will run the mccabe linter."""
         args = [
             "python",
             "-m",
@@ -231,14 +252,23 @@ class Mccabe(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the mccabe linter."""
         self.run()
 
 
 class Mypy(Linter):
+    """
+    Mypy linter.
+
+    Python static type checker.
+    https://mypy.readthedocs.io/en/stable/index.html
+    """
+
     name: str = "mypy"
     parallel_run: bool = True
 
     def run(self):
+        """Will run the mypy linter."""
         args = [
             "mypy",
             consts.EXECUTED_FROM,
@@ -247,14 +277,23 @@ class Mypy(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the mypy linter."""
         return self.run()
 
 
 class Pydocstyle(Linter):
+    """
+    Pydocstyle linter.
+
+    Static analysis of docstrings to follow PEP 257.
+    https://www.pydocstyle.org/en/stable/
+    """
+
     name: str = "pydocstyle"
     parallel_run: bool = True
 
     def run(self):
+        """Will run the pydocstyle linter."""
         args = [
             "pydocstyle",
             consts.EXECUTED_FROM,
@@ -263,6 +302,7 @@ class Pydocstyle(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the pydocstyle linter."""
         return self.run()
 
 
@@ -277,6 +317,7 @@ class Pyflakes(Linter):
     parallel_run: bool = True
 
     def run(self):
+        """Will run the pyflakes linter."""
         args = [
             "pyflakes",
             consts.EXECUTED_FROM,
@@ -285,14 +326,23 @@ class Pyflakes(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the pyflakes linter."""
         return self.run()
 
 
 class Pylint(Linter):
+    """
+    Pylint linter.
+
+    Static code analysis for Python. Checks for errors, code smells, and formatting.
+    https://pylint.pycqa.org/en/latest/
+    """
+
     name: str = "pylint"
     parallel_run: bool = True
 
     def run(self):
+        """Will run the pylint linter."""
         args = [
             "pylint",
             consts.EXECUTED_FROM,
@@ -301,14 +351,25 @@ class Pylint(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the pylint linter."""
         return self.run()
 
 
 class TFSec(Linter):
+    """
+    TFSec linter.
+
+    Static analysis security scanner for Terraform
+    https://aquasecurity.github.io/tfsec/v1.27.6/
+
+    NOTE: This will ALWAYS run in a docker container. TFsec will not be installed on the system.
+    """
+
     name: str = "tfsec"
     parallel_run: bool = True
 
     def run(self):
+        """Will run the tfsec linter in a docker container."""
         args = [
             "docker",
             "run",
@@ -323,14 +384,25 @@ class TFSec(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the tfsec linter in a docker container."""
         return self.run()
 
 
 class CheckOV(Linter):
+    """
+    CheckOV linter.
+
+    Cloud infrastructure configurations to find misconfigurations.
+    https://www.checkov.io/1.Welcome/Quick%20Start.html
+
+    NOTE: This will ALWAYS run in a docker container. CheckOV will not be installed on the system.
+    """
+
     name: str = "checkov"
     parallel_run: bool = True
 
     def run(self):
+        """Will run the checkov linter in a docker container."""
         args = [
             "docker",
             "run",
@@ -348,14 +420,25 @@ class CheckOV(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the checkov linter in a docker container."""
         return self.run()
 
 
 class Terrascan(Linter):
+    """
+    Terrascan linter.
+
+    Detect compliance and security violations across Infrastructure as Code
+    https://runterrascan.io/docs/
+
+    NOTE: This will ALWAYS run in a docker container. Terrascan will not be installed on the system.
+    """
+
     name: str = "terrascan"
     parallel_run: bool = True
 
     def run(self):
+        """Will run the terrascan linter in a docker container."""
         args = [
             "docker",
             "run",
@@ -371,14 +454,28 @@ class Terrascan(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the terrascan linter in a docker container."""
         return self.run()
 
 
 class TFLint(Linter):
+    """
+    TFLint linter.
+
+    Find possible errors (like illegal instance types) for Major Cloud providers
+    https://github.com/terraform-linters/tflint
+
+    WARNING: TFLint always checks only the current root module (no recursive check). This makes it a pain
+    to work with.
+
+    NOTE: This will ALWAYS run in a docker container. TFLint will not be installed on the system.
+    """
+
     name: str = "tflint"
     parallel_run: bool = True
 
     def run(self):
+        """Will run the tflint linter in a docker container."""
         args = [
             "docker",
             "run",
@@ -392,4 +489,5 @@ class TFLint(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the tflint linter in a docker container."""
         return self.run()
