@@ -1,7 +1,11 @@
+"""Contains all the implemented linters."""
 import typing as t
 
 from py_mono_build.config import consts, GREEN, logger, RED, RESET
 from py_mono_build.goals.interface import Linter
+
+
+CHECK_STRING = " check"
 
 
 def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
@@ -24,10 +28,18 @@ def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
 
 
 class Bandit(Linter):
+    """
+    Bandit linter.
+
+    Helps find common python security issues
+    https://bandit.readthedocs.io/en/latest/
+    """
+
     name: str = "bandit"
     parallel_run: bool = True
 
     def run(self):
+        """Will run the bandit linter recursively."""
         args = [
             "bandit",
             "-r",
@@ -37,14 +49,27 @@ class Bandit(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """Will run the bandit linter recursively."""
         return self.run()
 
 
 class Black(Linter):
+    """
+    Black linter.
+
+    Formats your code the correct way.
+    https://black.readthedocs.io/en/stable/
+    """
+
     name: str = "black"
     parallel_run: bool = False
 
     def run(self):
+        """
+        Will run the black linter.
+
+        NOTE: This WILL modify your files.
+        """
         args = [
             "black",
             consts.EXECUTED_FROM,
@@ -53,17 +78,29 @@ class Black(Linter):
         return _run(self.name, args)
 
     def check(self):
+        """
+        Will run the black linter in check mode.
+
+        NOTE: This will NOT modify your files.
+        """
         args = [
             "black",
             "--check",
             consts.EXECUTED_FROM,
             *self._args,
         ]
-        return _run(self.name + " check", args)
+        return _run(self.name + CHECK_STRING, args)
 
 
-class DocStringFormatter(Linter):
-    name: str = "doc_string_formatter"
+class PyDocStringFormatter(Linter):
+    """
+    PyDocStringFormatter linter.
+
+    A tool to automatically format Python docstrings to follow recommendations from PEP 8 and PEP 257.
+    https://pydocstringformatter.readthedocs.io/en/latest/index.html
+    """
+
+    name: str = "py_doc_string_formatter"
     parallel_run: bool = False
 
     def run(self):
@@ -83,7 +120,7 @@ class DocStringFormatter(Linter):
             *self._args,
         ]
 
-        _run(self.name + " check", args)
+        _run(self.name + CHECK_STRING, args)
 
 
 class Flake8(Linter):
@@ -143,7 +180,7 @@ class ISort(Linter):
             consts.EXECUTED_FROM,
             *self._args,
         ]
-        return _run(self.name + " check", args)
+        return _run(self.name + CHECK_STRING, args)
 
 
 class Mccabe(Linter):

@@ -5,7 +5,7 @@ import pathlib
 from py_mono_build.goals.linters import (
     Bandit,
     Black,
-    CheckOV, DocStringFormatter,
+    CheckOV, PyDocStringFormatter,
     Flake8,
     ISort,
     Mypy,
@@ -21,7 +21,7 @@ NAME = "py_mono_build"
 LINT = [
     Bandit(),
     Black(),
-    DocStringFormatter(),
+    PyDocStringFormatter(),
     Flake8(),
     ISort(),
     Mypy(),
