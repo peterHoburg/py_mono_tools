@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_build.goals.linters import Bandit, Black, Flake8, ISort, Mypy, PyDocStringFormatter, Pydocstyle, Pylint
+from py_mono_build.goals.linters import DEFAULT_PYTHON
 
 
 path = pathlib.Path(__file__).parent
@@ -10,14 +10,7 @@ path = pathlib.Path(__file__).parent
 NAME = "py_mono_build"
 
 LINT = [
-    Bandit(),
-    Black(),
-    PyDocStringFormatter(),
-    Flake8(),
-    ISort(),
-    Mypy(),
-    Pydocstyle(),
-    Pylint(),
+    *DEFAULT_PYTHON,
 ]
 TEST = []
 DEPLOY = []

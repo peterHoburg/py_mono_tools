@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_build.goals.linters import (
+from py_mono_build.goals.linters import (  # DEFAULT_PYTHON,; DEFAULT_TERRAFORM,
     Bandit,
     Black,
     CheckOV,
@@ -20,8 +20,11 @@ from py_mono_build.goals.linters import (
 
 path = pathlib.Path(__file__).parent
 
-NAME = "py_mono_build"
+NAME = "<EXAMPLE>"
 
+# You can list each linter or use one of the default linter lists.
+# NOTE: ORDER DOES MATTER!
+# LINT = [*DEFAULT_PYTHON, *DEFAULT_TERRAFORM]
 LINT = [
     Bandit(),
     Black(),
