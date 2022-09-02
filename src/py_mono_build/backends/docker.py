@@ -46,7 +46,6 @@ class Docker(Backend):
             "utf-8"
         )
 
-
     def interactive(self):
         raise NotImplementedError
 
@@ -55,11 +54,7 @@ class Docker(Backend):
 
     def _build(self, uid: int):
         subprocess.check_output(  # nosec B603
-            "docker "
-            "build "
-            "-t "
-            "pmb_docker_backend "
-            ".",
+            "docker " "build " "-t " "pmb_docker_backend " ".",
             shell=True,
             cwd=self._root_path,
         )

@@ -21,6 +21,7 @@ dir command was run from
 dir passed to command
 """
 
+
 def _load_conf():
     conf_location = f"{consts.EXECUTED_FROM}/CONF"
     logger.debug("CONF location: %s", conf_location)
