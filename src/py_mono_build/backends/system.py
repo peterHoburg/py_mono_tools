@@ -1,6 +1,7 @@
 import subprocess  # nosec B404
 
 from py_mono_build.backends.interface import Backend
+import typing as t
 
 
 class System(Backend):
@@ -12,7 +13,7 @@ class System(Backend):
     def purge(self):
         raise NotImplementedError
 
-    def run(self, args: str):
+    def run(self, args: t.List[str]):
         process = subprocess.Popen(  # nosec B603
             args,
             cwd=self._root_path,

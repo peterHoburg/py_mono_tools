@@ -1,12 +1,17 @@
 import logging
 import os
 import pathlib
+import typing as t
+
+
+if t.TYPE_CHECKING:
+    from py_mono_build.backends.interface import Backend
 
 
 class Consts:
     EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
-    CURRENT_BACKEND = None
-    BACKENDS = None
+    CURRENT_BACKEND: t.Optional["Backend"] = None
+    BACKENDS: t.Optional[t.Dict[str, t.Type["Backend"]]] = None
     CONF = None
 
 
