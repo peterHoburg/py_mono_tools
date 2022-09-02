@@ -6,24 +6,19 @@ from py_mono_build.goals.interface import Linter
 
 def _run(linter: str, args: t.List[str]) -> int:
     log_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
+    logs = ""
 
     logger.debug("Running %s: %s", linter, args)
-
-    logs = log_format.format(linter + " start")
-
     return_code, returned_logs = consts.CURRENT_BACKEND.run(args)
-
-    if return_code != 0:
-        logs += RED
-    else:
-        logs += GREEN
-
-    logs = logs + returned_logs
-
     logger.debug("%s return code: %s", linter, return_code)
 
-    logs += RESET
+    color = GREEN if return_code == 0 else RED
+    logs += color
+    logs += log_format.format(linter + " start")
+    logs = logs + returned_logs
+    logs += color
     logs += log_format.format(linter + " end")
+    logs += RESET
 
     logger.info(logs)
     return return_code

@@ -1,4 +1,5 @@
 import os
+import pathlib
 import subprocess  # nosec B404
 import sys
 import typing as t
@@ -22,7 +23,11 @@ class Docker(Backend):
     def run(self, args: t.List[str]):
         command = ""
         for arg in args:
-            command += f"{arg} "
+            print(type(arg))
+            if type(arg) != str:
+                command += "/opt/"
+            else:
+                command += f"{arg} "
 
         logger.info("running command: %s", command)
 
@@ -41,11 +46,6 @@ class Docker(Backend):
             "utf-8"
         )
 
-        subprocess.check_output(  # nosec B603
-            f"docker run -it pmb_docker_backend {command}",
-            shell=True,
-            cwd=self._root_path,
-        )
 
     def interactive(self):
         raise NotImplementedError

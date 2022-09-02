@@ -9,11 +9,17 @@ import typing as t
 
 import click
 
-from py_mono_build.goals.interface import Linter
-from py_mono_build.config import consts, logger
 from py_mono_build.backends import Docker, System
+from py_mono_build.config import consts, logger
+from py_mono_build.goals.interface import Linter
+
 
 logger.info("Starting main")
+
+"""
+dir command was run from
+dir passed to command
+"""
 
 def _load_conf():
     conf_location = f"{consts.EXECUTED_FROM}/CONF"
@@ -25,6 +31,7 @@ def _load_conf():
     loader.exec_module(mod)
 
     consts.CONF = mod
+
 
 def _init_logger(verbose: bool):
     if verbose:
