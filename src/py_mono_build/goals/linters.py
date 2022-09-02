@@ -92,47 +92,6 @@ class Black(Linter):
         return _run(self.name + CHECK_STRING, args)
 
 
-class PyDocStringFormatter(Linter):
-    """
-    PyDocStringFormatter linter.
-
-    A tool to automatically format Python docstrings to follow recommendations from PEP 8 and PEP 257.
-    https://pydocstringformatter.readthedocs.io/en/latest/index.html
-    """
-
-    name: str = "py_doc_string_formatter"
-    parallel_run: bool = False
-
-    def run(self):
-        """
-        Will run the pydocstringformatter linter.
-
-        NOTE: This WILL modify your files.
-        """
-        args = [
-            "pydocstringformatter",
-            "-w",
-            consts.EXECUTED_FROM,
-            *self._args,
-        ]
-
-        return _run(self.name, args)
-
-    def check(self):
-        """
-        Will run the pydocstringformatter linter in check mode.
-
-        NOTE: This will NOT modify your files.
-        """
-        args = [
-            "pydocstringformatter",
-            consts.EXECUTED_FROM,
-            *self._args,
-        ]
-
-        _run(self.name + CHECK_STRING, args)
-
-
 class Flake8(Linter):
     """
     Flake8 linter.
@@ -281,6 +240,47 @@ class Mypy(Linter):
         return self.run()
 
 
+class PyDocStringFormatter(Linter):
+    """
+    PyDocStringFormatter linter.
+
+    A tool to automatically format Python docstrings to follow recommendations from PEP 8 and PEP 257.
+    https://pydocstringformatter.readthedocs.io/en/latest/index.html
+    """
+
+    name: str = "py_doc_string_formatter"
+    parallel_run: bool = False
+
+    def run(self):
+        """
+        Will run the pydocstringformatter linter.
+
+        NOTE: This WILL modify your files.
+        """
+        args = [
+            "pydocstringformatter",
+            "-w",
+            consts.EXECUTED_FROM,
+            *self._args,
+        ]
+
+        return _run(self.name, args)
+
+    def check(self):
+        """
+        Will run the pydocstringformatter linter in check mode.
+
+        NOTE: This will NOT modify your files.
+        """
+        args = [
+            "pydocstringformatter",
+            consts.EXECUTED_FROM,
+            *self._args,
+        ]
+
+        _run(self.name + CHECK_STRING, args)
+
+
 class Pydocstyle(Linter):
     """
     Pydocstyle linter.
@@ -352,39 +352,6 @@ class Pylint(Linter):
 
     def check(self):
         """Will run the pylint linter."""
-        return self.run()
-
-
-class TFSec(Linter):
-    """
-    TFSec linter.
-
-    Static analysis security scanner for Terraform
-    https://aquasecurity.github.io/tfsec/v1.27.6/
-
-    NOTE: This will ALWAYS run in a docker container. TFsec will not be installed on the system.
-    """
-
-    name: str = "tfsec"
-    parallel_run: bool = True
-
-    def run(self):
-        """Will run the tfsec linter in a docker container."""
-        args = [
-            "docker",
-            "run",
-            "--rm",
-            "-it",
-            "-v",
-            f"{consts.EXECUTED_FROM}:/src",
-            "aquasec/tfsec",
-            "/src",
-            *self._args,
-        ]
-        return _run(self.name, args)
-
-    def check(self):
-        """Will run the tfsec linter in a docker container."""
         return self.run()
 
 
@@ -491,3 +458,54 @@ class TFLint(Linter):
     def check(self):
         """Will run the tflint linter in a docker container."""
         return self.run()
+
+
+class TFSec(Linter):
+    """
+    TFSec linter.
+
+    Static analysis security scanner for Terraform
+    https://aquasecurity.github.io/tfsec/v1.27.6/
+
+    NOTE: This will ALWAYS run in a docker container. TFsec will not be installed on the system.
+    """
+
+    name: str = "tfsec"
+    parallel_run: bool = True
+
+    def run(self):
+        """Will run the tfsec linter in a docker container."""
+        args = [
+            "docker",
+            "run",
+            "--rm",
+            "-it",
+            "-v",
+            f"{consts.EXECUTED_FROM}:/src",
+            "aquasec/tfsec",
+            "/src",
+            *self._args,
+        ]
+        return _run(self.name, args)
+
+    def check(self):
+        """Will run the tfsec linter in a docker container."""
+        return self.run()
+
+
+DEFAULT_PYTHON = [
+    Bandit(),
+    Black(),
+    Flake8(),
+    ISort(),
+    Mypy(),
+    PyDocStringFormatter(),
+    Pydocstyle(),
+    Pylint(),
+]
+
+DEFAULT_TERRAFORM = [
+    CheckOV(),
+    Terrascan(args=["-d", "./terraform"]),
+    TFSec(),
+]

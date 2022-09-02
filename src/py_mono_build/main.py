@@ -21,6 +21,7 @@ logger.info("Starting main")
 # TODO add weight to linters
 # TODO run parallel false first by default.
 # TODO add shell auto completion for linters: https://click.palletsprojects.com/en/8.1.x/shell-completion/
+# TODO load linter confs dynamically
 
 
 def _load_conf():
@@ -130,8 +131,27 @@ def init():
 @click.option(
     "--show_success", is_flag=True, default=False, help="Show successful outputs"
 )
-def lint(check: bool, specific: t.List[str], fail_fast: bool, show_success: bool):
+@click.option(
+    "--parallel",
+    is_flag=True,
+    default=False,
+    help="""
+    NOT IMPLEMENTED
+    Runs all linters marked with parallel_run=True at the same time
+    NOTE: All linters labeled as parallel_run=False will be run BEFORE ones marked as True.
+    """,
+)
+def lint(
+    check: bool,
+    specific: t.List[str],
+    fail_fast: bool,
+    show_success: bool,
+    parallel: bool,
+):
     """Run one or more Linters specified in the CONF file."""
+    if parallel is True:
+        raise NotImplementedError
+
     logger.info("Starting lint")
 
     linters: t.List[Linter] = consts.CONF.LINT  # type: ignore
