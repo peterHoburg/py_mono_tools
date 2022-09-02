@@ -58,7 +58,7 @@ class Docker(Backend):
             "DOCKER_BUILDKIT": "1",
             "BUILDKIT_PROGRESS": "plain",
         }
-        process = subprocess.Popen(  # nosec B603
+        process = subprocess.Popen(  # nosec B607 B603
             [
                 "docker",
                 "build",
@@ -87,7 +87,7 @@ class Docker(Backend):
 
     def _kill_all_containers(self):
         try:
-            subprocess.check_output(  # nosec B607 B603
+            subprocess.check_output(  # nosec B607 B603 B602
                 "docker ps -q | xargs -r docker kill",
                 shell=True,
                 cwd=self._root_path,

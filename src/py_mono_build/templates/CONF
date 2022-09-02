@@ -5,12 +5,16 @@ import pathlib
 from py_mono_build.goals.linters import (
     Bandit,
     Black,
-    CheckOV, DocStringFormatter,
+    CheckOV,
+    DocStringFormatter,
     Flake8,
     ISort,
     Mypy,
     Pydocstyle,
-    Pylint, Terrascan, TFLint, TFSec,
+    Pylint,
+    Terrascan,
+    TFLint,
+    TFSec,
 )
 
 

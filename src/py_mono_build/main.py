@@ -17,7 +17,8 @@ from py_mono_build.goals.interface import Linter
 logger.info("Starting main")
 
 """
-dir command was run from
+Dir command was run from.
+
 dir passed to command
 """
 

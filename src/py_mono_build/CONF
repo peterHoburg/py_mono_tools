@@ -2,16 +2,7 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_build.goals.linters import (
-    Bandit,
-    Black,
-    DocStringFormatter,
-    Flake8,
-    ISort,
-    Mypy,
-    Pydocstyle,
-    Pylint,
-)
+from py_mono_build.goals.linters import Bandit, Black, DocStringFormatter, Flake8, ISort, Mypy, Pydocstyle, Pylint
 
 
 path = pathlib.Path(__file__).parent
