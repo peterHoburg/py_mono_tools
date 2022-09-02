@@ -5,7 +5,7 @@ import sys
 import typing as t
 
 from py_mono_build.backends.interface import Backend
-from py_mono_build.config import logger
+from py_mono_build.config import consts, logger
 
 
 class Docker(Backend):
@@ -43,7 +43,7 @@ class Docker(Backend):
         self.build()
         process = subprocess.Popen(  # nosec B603
             commands,
-            cwd=self._root_path,
+            cwd=consts.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
@@ -77,7 +77,7 @@ class Docker(Backend):
                 ".",
             ],
             env=env,
-            cwd=self._root_path,
+            cwd=consts.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )

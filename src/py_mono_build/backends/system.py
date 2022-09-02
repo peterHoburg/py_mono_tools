@@ -1,9 +1,9 @@
 """The system backend takes the goals instructions and runs them on the local system."""
 import subprocess  # nosec B404
+import typing as t
 
 from py_mono_build.backends.interface import Backend
 from py_mono_build.config import consts
-import typing as t
 
 
 class System(Backend):

@@ -1,7 +1,6 @@
 """Contains the interfaces that backends will implement."""
 import abc
 import typing as t
-from pathlib import Path
 
 
 class Backend(abc.ABC):

@@ -4,7 +4,7 @@ from py_mono_build.config import consts, GREEN, logger, RED, RESET
 from py_mono_build.goals.interface import Linter
 
 
-def _run(linter: str, args: t.List[str]) -> int:
+def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
     log_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
     logs = ""
 
@@ -20,8 +20,7 @@ def _run(linter: str, args: t.List[str]) -> int:
     logs += log_format.format(linter + " end")
     logs += RESET
 
-    logger.info(logs)
-    return return_code
+    return logs, return_code
 
 
 class Bandit(Linter):

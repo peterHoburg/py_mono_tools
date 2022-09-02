@@ -123,7 +123,13 @@ def init():
     default=[],
     help="Specify one or more linters to run. NOTE: The linter MUST be listed in the respected CONF file.",
 )
-def lint(check: bool, specific: t.List[str]):
+@click.option(
+    "--fail_fast", "-ff", is_flag=True, default=False, help="Stop on first failure."
+)
+@click.option(
+    "--show_success", is_flag=True, default=False, help="Show successful outputs"
+)
+def lint(check: bool, specific: t.List[str], fail_fast: bool, show_success: bool):
     """Run one or more Linters specified in the CONF file."""
     logger.info("Starting lint")
 
@@ -142,10 +148,20 @@ def lint(check: bool, specific: t.List[str]):
 
         logger.debug("Linting: %s", linter)
         if check is True:
-            result = linter.check()
+            logs, return_code = linter.check()
         else:
-            result = linter.run()
-        logger.info("Lint result: %s %s", linter.name, result)
+            logs, return_code = linter.run()
+        logger.info("Lint result: %s %s", linter.name, return_code)
+
+        if show_success is False and return_code == 0:
+            logger.debug("Skipping successful output")
+            logger.debug(logs)
+        else:
+            logger.info(logs)
+
+        if fail_fast is True and return_code != 0:
+            logger.error("Linter %s failed with code %s", linter.name, return_code)
+            exit(1)
 
     logger.info("Linting complete")
 
