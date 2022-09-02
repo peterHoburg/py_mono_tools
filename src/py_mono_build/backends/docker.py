@@ -27,7 +27,6 @@ class Docker(Backend):
             "pmb_docker_backend",
         ]
         for arg in args:
-            print(type(arg))
             if type(arg) != str:
                 commands.append("/opt/")
             else:
@@ -55,10 +54,36 @@ class Docker(Backend):
         self._kill_all_containers()
 
     def _build(self, uid: int):
-        subprocess.check_output(  # nosec B603
-            ["docker", "build", "-t", "pmb_docker_backend", "."],
+        env = {
+            "DOCKER_BUILDKIT": "1",
+            "BUILDKIT_PROGRESS": "plain",
+        }
+        process = subprocess.Popen(  # nosec B603
+            [
+                "docker",
+                "build",
+                "--build-arg",
+                f"USER_UID={uid}",
+                "-t",
+                "pmb_docker_backend",
+                ".",
+            ],
+            env=env,
             cwd=self._root_path,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
+        stdout_data, stderr_data = process.communicate()
+        logger.debug("Docker build stdout: \n%s", stdout_data.decode("utf-8"))
+        logger.debug("Docker build stderr: \n%s", stderr_data.decode("utf-8"))
+        if process.returncode != 0:
+            logger.error(
+                "Docker build failed: %s, stdout: %s stderr: %s",
+                process.returncode,
+                stdout_data.decode("utf-8"),
+                stderr_data.decode("utf-8"),
+            )
+            sys.exit(1)
 
     def _kill_all_containers(self):
         try:
