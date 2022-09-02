@@ -12,10 +12,14 @@ if t.TYPE_CHECKING:
 class Consts:
     """Used to store some "consts" that will be set at CLI runtime, then used in other modules."""
 
-    EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
-    CURRENT_BACKEND: t.Optional["Backend"] = None
-    BACKENDS: t.Optional[t.Dict[str, t.Type["Backend"]]] = None
-    CONF = None
+    EXECUTED_FROM: pathlib.Path = pathlib.Path(
+        os.getcwd()
+    )  # pylint: disable=invalid-name
+    CURRENT_BACKEND: t.Optional["Backend"] = None  # pylint: disable=invalid-name
+    BACKENDS: t.Optional[
+        t.Dict[str, t.Type["Backend"]]
+    ] = None  # pylint: disable=invalid-name
+    CONF = None  # pylint: disable=invalid-name
 
 
 consts = Consts()

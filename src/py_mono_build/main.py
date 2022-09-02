@@ -5,6 +5,7 @@ import importlib.util
 import logging
 import os
 import pathlib
+import sys
 import typing as t
 
 import click
@@ -98,6 +99,7 @@ def build(force_rebuild, modules):
 
     Docker is the default.
     """
+    print(modules)
     consts.CURRENT_BACKEND.build(force_rebuild=force_rebuild)
 
 
@@ -160,7 +162,7 @@ def lint(check: bool, specific: t.List[str], fail_fast: bool, show_success: bool
 
         if fail_fast is True and return_code != 0:
             logger.error("Linter %s failed with code %s", linter.name, return_code)
-            exit(1)
+            sys.exit(1)
 
     logger.info("Linting complete")
 

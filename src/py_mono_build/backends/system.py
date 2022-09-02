@@ -13,11 +13,9 @@ class System(Backend):
 
     def build(self, force_rebuild: bool = False):
         """Will do nothing for the system backend."""
-        pass
 
     def purge(self):
         """Will do nothing for the system backend."""
-        pass
 
     def run(self, args: t.List[str]):
         """Will run a command on the local system."""
@@ -35,8 +33,6 @@ class System(Backend):
 
     def interactive(self):
         """Will do nothing for the system backend."""
-        pass
 
     def shutdown(self):
         """Will do nothing for the system backend."""
-        pass
