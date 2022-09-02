@@ -1,5 +1,4 @@
 import os
-import pathlib
 import subprocess  # nosec B404
 import sys
 import typing as t
@@ -21,21 +20,24 @@ class Docker(Backend):
         raise NotImplementedError
 
     def run(self, args: t.List[str]):
-        command = ""
+        commands = [
+            "docker",
+            "run",
+            "-it",
+            "pmb_docker_backend",
+        ]
         for arg in args:
             print(type(arg))
             if type(arg) != str:
-                command += "/opt/"
+                commands.append("/opt/")
             else:
-                command += f"{arg} "
+                commands.append(arg)
 
-        logger.info("running command: %s", command)
+        logger.info("running command: %s", commands)
 
         self.build()
         process = subprocess.Popen(  # nosec B603
-            f"docker run -it pmb_docker_backend {command}",
-            # args,
-            shell=True,
+            commands,
             cwd=self._root_path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -54,8 +56,7 @@ class Docker(Backend):
 
     def _build(self, uid: int):
         subprocess.check_output(  # nosec B603
-            "docker " "build " "-t " "pmb_docker_backend " ".",
-            shell=True,
+            ["docker", "build", "-t", "pmb_docker_backend", "."],
             cwd=self._root_path,
         )
 
