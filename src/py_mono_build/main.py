@@ -63,9 +63,7 @@ def _init_backend(_build_system: str):
 
     consts.BACKENDS = {Docker.name: Docker, System.name: System}
 
-    consts.CURRENT_BACKEND = consts.BACKENDS[_build_system](
-        execution_root_path=consts.EXECUTED_FROM
-    )
+    consts.CURRENT_BACKEND = consts.BACKENDS[_build_system]()
 
 
 @click.group()
@@ -129,7 +127,7 @@ def lint(check: bool, specific: t.List[str]):
     """Run one or more Linters specified in the CONF file."""
     logger.info("Starting lint")
 
-    linters: t.List[Linter] = consts.CONF.LINT
+    linters: t.List[Linter] = consts.CONF.LINT  # type: ignore
     logger.debug("Linters: %s", linters)
 
     cleaned_spec = []
@@ -166,11 +164,13 @@ def migration():
 
 @new.command()
 def package():
+    """Not implemented."""
     raise NotImplementedError
 
 
 @cli.command()
 def run():
+    """Not implemented."""
     raise NotImplementedError
 
 
@@ -182,6 +182,7 @@ def interactive():
 
 @cli.command()
 def setup():
+    """Not implemented."""
     raise NotImplementedError
 
 
@@ -193,4 +194,5 @@ def test():
 
 @cli.command()
 def validate():
+    """Not implemented."""
     raise NotImplementedError

@@ -1,30 +1,35 @@
+"""Contains the interfaces that backends will implement."""
 import abc
 import typing as t
 from pathlib import Path
 
 
 class Backend(abc.ABC):
-    name: str
+    """The interface that all backends will implement."""
 
-    def __init__(self, execution_root_path: Path):
-        self._root_path: Path = execution_root_path
+    name: str
 
     @abc.abstractmethod
     def build(self, force_rebuild: bool = False):
+        """Will run any build jobs that are needed for the backend."""
         raise NotImplementedError
 
     @abc.abstractmethod
     def purge(self):
+        """Will remove any data written by the backend."""
         raise NotImplementedError
 
     @abc.abstractmethod
     def run(self, args: t.List[str]) -> t.Tuple[int, str]:
+        """Will run a command in the backend."""
         raise NotImplementedError
 
     @abc.abstractmethod
     def interactive(self):
+        """Will drop the user into an interactive shell."""
         raise NotImplementedError
 
     @abc.abstractmethod
     def shutdown(self):
+        """Will shut down any instances of the backend."""
         raise NotImplementedError

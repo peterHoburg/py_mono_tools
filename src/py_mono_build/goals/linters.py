@@ -9,7 +9,7 @@ def _run(linter: str, args: t.List[str]) -> int:
     logs = ""
 
     logger.debug("Running %s: %s", linter, args)
-    return_code, returned_logs = consts.CURRENT_BACKEND.run(args)
+    return_code, returned_logs = consts.CURRENT_BACKEND.run(args)  # type: ignore
     logger.debug("%s return code: %s", linter, return_code)
 
     color = GREEN if return_code == 0 else RED

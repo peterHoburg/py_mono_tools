@@ -1,3 +1,4 @@
+"""The Docker backend takes the goals instructions and runs them in a docker container."""
 import os
 import subprocess  # nosec B404
 import sys
@@ -8,18 +9,23 @@ from py_mono_build.config import logger
 
 
 class Docker(Backend):
+    """Class to interact with a docker container."""
+
     name: str = "docker"
 
     def build(self, force_rebuild: bool = False):
+        """Will shut down any running containers and builds a new one."""
         uid = os.getuid()
 
         self.shutdown()
         self._build(uid)
 
     def purge(self):
+        """Will do nothing for the docker backend."""
         raise NotImplementedError
 
     def run(self, args: t.List[str]):
+        """Will run a command in a docker container."""
         commands = [
             "docker",
             "run",
@@ -48,9 +54,11 @@ class Docker(Backend):
         )
 
     def interactive(self):
+        """Not implemented for the docker backend."""
         raise NotImplementedError
 
     def shutdown(self):
+        """Will shut down any running containers."""
         self._kill_all_containers()
 
     def _build(self, uid: int):

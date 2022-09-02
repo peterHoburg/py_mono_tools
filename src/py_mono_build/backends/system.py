@@ -1,22 +1,29 @@
+"""The system backend takes the goals instructions and runs them on the local system."""
 import subprocess  # nosec B404
 
 from py_mono_build.backends.interface import Backend
+from py_mono_build.config import consts
 import typing as t
 
 
 class System(Backend):
+    """Class to interact with the local system."""
+
     name: str = "system"
 
     def build(self, force_rebuild: bool = False):
+        """Will do nothing for the system backend."""
         pass
 
     def purge(self):
-        raise NotImplementedError
+        """Will do nothing for the system backend."""
+        pass
 
     def run(self, args: t.List[str]):
+        """Will run a command on the local system."""
         process = subprocess.Popen(  # nosec B603
             args,
-            cwd=self._root_path,
+            cwd=consts.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
@@ -27,7 +34,9 @@ class System(Backend):
         )
 
     def interactive(self):
-        raise NotImplementedError
+        """Will do nothing for the system backend."""
+        pass
 
     def shutdown(self):
+        """Will do nothing for the system backend."""
         pass

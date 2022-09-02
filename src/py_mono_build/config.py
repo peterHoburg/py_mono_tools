@@ -1,3 +1,4 @@
+"""Store all the config/const data other files need."""
 import logging
 import os
 import pathlib
@@ -9,6 +10,8 @@ if t.TYPE_CHECKING:
 
 
 class Consts:
+    """Used to store some "consts" that will be set at CLI runtime, then used in other modules."""
+
     EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
     CURRENT_BACKEND: t.Optional["Backend"] = None
     BACKENDS: t.Optional[t.Dict[str, t.Type["Backend"]]] = None
@@ -32,6 +35,8 @@ FORMAT = "%(name)s-(%(filename)s:%(lineno)d)(%(process)d:%(thread)d) - %(levelna
 
 
 class ColorFormatting(logging.Formatter):
+    """Used to colorize the log output."""
+
     FORMATS = {
         logging.DEBUG: GRAY + FORMAT + RESET,
         logging.INFO: GRAY + FORMAT + RESET,
@@ -41,6 +46,7 @@ class ColorFormatting(logging.Formatter):
     }
 
     def format(self, record):
+        """Add formatting to the log output."""
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
