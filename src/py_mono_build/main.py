@@ -74,6 +74,9 @@ def _init_backend(_build_system: str):
 @click.option("--verbose", "-v", default=False, is_flag=True)
 def cli(backend, absolute_path, relative_path, verbose):
     """Py mono build is a CLI tool that simplifies using python in a monorepo."""
+    if "--help" in sys.argv or "-h" in sys.argv:
+        return
+
     logger.info("Starting cli")
 
     _init_logger(verbose=verbose)

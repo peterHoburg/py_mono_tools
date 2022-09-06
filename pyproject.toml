@@ -31,6 +31,7 @@ pylint = "^2"
 
 
 [tool.poetry.dev-dependencies]
+pydevd-pycharm = "~=222.3739.56"
 
 [tool.isort]
 profile = "black"

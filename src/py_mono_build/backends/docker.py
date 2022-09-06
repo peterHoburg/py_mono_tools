@@ -98,7 +98,7 @@ class Docker(Backend):
             subprocess.check_output(  # nosec B607 B603 B602
                 "docker ps -q | xargs -r docker kill",
                 shell=True,
-                cwd=self._root_path,
+                cwd=consts.EXECUTED_FROM,
             )
             # subprocess.check_output(  # nosec B607 B603
             #     ["docker-compose", "down", "--remove-orphans"],

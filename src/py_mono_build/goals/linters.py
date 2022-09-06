@@ -144,7 +144,7 @@ class Flake8(Linter):
 
     def check(self):
         """Will run the flake8 linter."""
-        self.run()
+        return self.run()
 
 
 class ISort(Linter):
@@ -278,7 +278,7 @@ class PyDocStringFormatter(Linter):
             *self._args,
         ]
 
-        _run(self.name + CHECK_STRING, args)
+        return _run(self.name + CHECK_STRING, args)
 
 
 class Pydocstyle(Linter):
@@ -494,12 +494,12 @@ class TFSec(Linter):
 
 
 DEFAULT_PYTHON = [
-    Bandit(),
-    Black(),
-    Flake8(),
     ISort(),
-    Mypy(),
+    Black(),
     PyDocStringFormatter(),
+    Bandit(),
+    Flake8(),
+    Mypy(),
     Pydocstyle(),
     Pylint(),
 ]
