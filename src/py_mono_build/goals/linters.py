@@ -13,7 +13,11 @@ def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
     logs = ""
 
     logger.debug("Running %s: %s", linter, args)
-    return_code, returned_logs = consts.CURRENT_BACKEND.run(args)  # type: ignore
+    if "docker" == args[0] and consts.CURRENT_BACKEND.name == "docker":
+        logger.debug("Bypassing docker backend for system backend. Linter: %s", linter)
+        return_code, returned_logs = consts.BACKENDS["system"]().run(args)
+    else:
+        return_code, returned_logs = consts.CURRENT_BACKEND.run(args)  # type: ignore
     logger.debug("%s return code: %s", linter, return_code)
 
     color = GREEN if return_code == 0 else RED
