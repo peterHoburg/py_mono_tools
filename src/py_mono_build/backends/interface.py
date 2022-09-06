@@ -3,6 +3,7 @@ import abc
 import typing as t
 
 
+# pylint: disable=R0801
 class Backend(abc.ABC):
     """The interface that all backends will implement."""
 

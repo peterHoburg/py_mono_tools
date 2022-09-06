@@ -33,6 +33,7 @@ def _load_conf():
     mod = importlib.util.module_from_spec(spec)  # type: ignore
     loader.exec_module(mod)
 
+    # pylint: disable=invalid-name
     consts.CONF = mod
 
 
@@ -46,13 +47,16 @@ def _init_logger(verbose: bool):
 def _set_absolute_path(absolute_path: str):
     logger.info("Overwriting execution root path: %s", absolute_path)
 
+    # pylint: disable=invalid-name
     consts.EXECUTED_FROM = pathlib.Path(absolute_path).resolve()
-    os.chdir(consts.EXECUTED_FROM.resolve())
+
+    os.chdir(consts.EXECUTED_FROM.resolve())  # pylint: disable=invalid-name
 
 
 def _set_relative_path(relative_path: str):
     logger.info("Overwriting execution root path: %s", relative_path)
 
+    # pylint: disable=invalid-name
     consts.EXECUTED_FROM = consts.EXECUTED_FROM.joinpath(
         pathlib.Path(relative_path).resolve()
     )
@@ -62,7 +66,11 @@ def _set_relative_path(relative_path: str):
 def _init_backend(_build_system: str):
     logger.debug("Initializing build system: %s", _build_system)
 
-    consts.BACKENDS = {Docker.name: Docker, System.name: System}
+    # pylint: disable=invalid-name
+    consts.BACKENDS = {
+        Docker.name: Docker,
+        System.name: System,
+    }
 
     consts.CURRENT_BACKEND = consts.BACKENDS[_build_system]()
 

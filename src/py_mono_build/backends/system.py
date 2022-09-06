@@ -19,14 +19,14 @@ class System(Backend):
 
     def run(self, args: t.List[str]):
         """Will run a command on the local system."""
-        process = subprocess.Popen(  # nosec B603
+        with subprocess.Popen(  # nosec B603
             args,
             cwd=consts.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-        )
+        ) as process:
 
-        stdout_data, stderr_data = process.communicate()
+            stdout_data, stderr_data = process.communicate()
         return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode(
             "utf-8"
         )

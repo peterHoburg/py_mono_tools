@@ -6,6 +6,7 @@ from py_mono_build.goals.interface import Linter
 
 
 CHECK_STRING = " check"
+MAX_LINE_LENGTH = 120
 
 
 def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
@@ -13,9 +14,13 @@ def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
     logs = ""
 
     logger.debug("Running %s: %s", linter, args)
-    if "docker" == args[0] and consts.CURRENT_BACKEND.name == "docker":
+    if (
+        len(args) > 0
+        and "docker" == args[0]
+        and consts.CURRENT_BACKEND.name == "docker"  # type: ignore
+    ):
         logger.debug("Bypassing docker backend for system backend. Linter: %s", linter)
-        return_code, returned_logs = consts.BACKENDS["system"]().run(args)
+        return_code, returned_logs = consts.BACKENDS["system"]().run(args)  # type: ignore
     else:
         return_code, returned_logs = consts.CURRENT_BACKEND.run(args)  # type: ignore
     logger.debug("%s return code: %s", linter, return_code)
@@ -130,9 +135,7 @@ class Flake8(Linter):
         if no_max_comp is True:
             args.append("--max-complexity=10")
         if no_max_line is True:
-            args.append("--max-line-length=120")
-
-        args.append("--ignore=E203")
+            args.append(f"--max-line-length={MAX_LINE_LENGTH}")
 
         super().__init__(args)
 
@@ -502,10 +505,10 @@ DEFAULT_PYTHON = [
     Black(),
     PyDocStringFormatter(),
     Bandit(),
-    Flake8(),
+    Flake8(args=["--ignore=E203", "--ignore=W503"]),
     Mypy(),
     Pydocstyle(),
-    Pylint(),
+    Pylint(args=[f"--max-line-length={MAX_LINE_LENGTH}"]),
 ]
 
 DEFAULT_TERRAFORM = [

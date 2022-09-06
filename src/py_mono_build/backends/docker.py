@@ -8,6 +8,7 @@ from py_mono_build.backends.interface import Backend
 from py_mono_build.config import consts, logger
 
 
+# pylint: disable=R0801
 class Docker(Backend):
     """Class to interact with a docker container."""
 
@@ -33,7 +34,7 @@ class Docker(Backend):
             "pmb_docker_backend",
         ]
         for arg in args:
-            if type(arg) != str:
+            if isinstance(arg, str):
                 commands.append("/opt/")
             else:
                 commands.append(arg)
@@ -41,14 +42,14 @@ class Docker(Backend):
         logger.info("running command: %s", commands)
 
         self.build()
-        process = subprocess.Popen(  # nosec B603
+        with subprocess.Popen(  # nosec B603
             commands,
             cwd=consts.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-        )
+        ) as process:
 
-        stdout_data, stderr_data = process.communicate()
+            stdout_data, stderr_data = process.communicate()
         return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode(
             "utf-8"
         )
@@ -66,7 +67,7 @@ class Docker(Backend):
             "DOCKER_BUILDKIT": "1",
             "BUILDKIT_PROGRESS": "plain",
         }
-        process = subprocess.Popen(  # nosec B607 B603
+        with subprocess.Popen(  # nosec B607 B603
             [
                 "docker",
                 "build",
@@ -80,8 +81,9 @@ class Docker(Backend):
             cwd=consts.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-        )
-        stdout_data, stderr_data = process.communicate()
+        ) as process:
+            stdout_data, stderr_data = process.communicate()
+
         logger.debug("Docker build stdout: \n%s", stdout_data.decode("utf-8"))
         logger.debug("Docker build stderr: \n%s", stderr_data.decode("utf-8"))
         if process.returncode != 0:

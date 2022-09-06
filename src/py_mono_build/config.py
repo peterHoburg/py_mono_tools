@@ -9,6 +9,7 @@ if t.TYPE_CHECKING:
     from py_mono_build.backends.interface import Backend
 
 
+# pylint: disable=too-few-public-methods
 class Consts:
     """Used to store some "consts" that will be set at CLI runtime, then used in other modules."""
 
