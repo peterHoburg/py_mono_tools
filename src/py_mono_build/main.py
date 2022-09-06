@@ -2,6 +2,7 @@
 import importlib
 import importlib.machinery
 import importlib.util
+import inspect
 import logging
 import os
 import pathlib
@@ -12,6 +13,7 @@ import click
 
 from py_mono_build.backends import Docker, System
 from py_mono_build.config import consts, logger
+from py_mono_build.goals import linters as linters_mod
 from py_mono_build.goals.interface import Linter
 
 
@@ -67,6 +69,25 @@ def _init_backend(_build_system: str):
     consts.CURRENT_BACKEND = consts.BACKENDS[_build_system]()
 
 
+def _find_linters():
+    logger.debug("Finding linters")
+    linter_classes = inspect.getmembers(linters_mod, inspect.isclass)
+    linter_instances = [
+        linter_class[1]()
+        for linter_class in linter_classes
+        if issubclass(linter_class[1], Linter) and linter_class[1] != Linter
+    ]
+    consts.ALL_LINTERS = linter_instances
+
+    for linter in linter_instances:
+        consts.ALL_LINTER_NAMES.append(linter.name)
+
+    logger.debug("Found linters: %s", consts.ALL_LINTER_NAMES)
+
+
+_find_linters()
+
+
 @click.group()
 @click.option("--backend", default="system", type=str)
 @click.option("--absolute_path", "-ap", default=None, type=click.Path())
@@ -74,10 +95,10 @@ def _init_backend(_build_system: str):
 @click.option("--verbose", "-v", default=False, is_flag=True)
 def cli(backend, absolute_path, relative_path, verbose):
     """Py mono build is a CLI tool that simplifies using python in a monorepo."""
+    logger.info("Starting cli")
+
     if "--help" in sys.argv or "-h" in sys.argv:
         return
-
-    logger.info("Starting cli")
 
     _init_logger(verbose=verbose)
 
@@ -126,7 +147,12 @@ def init():
     "-s",
     multiple=True,
     default=[],
-    help="Specify one or more linters to run. NOTE: The linter MUST be listed in the respected CONF file.",
+    help=f"""
+    Specify one or more linters to run. NOTE: The linter MUST be listed in the respected CONF file.
+
+    Linters:
+    {consts.ALL_LINTER_NAMES}
+    """,
 )
 @click.option("--fail_fast", "-ff", is_flag=True, default=False, help="Stop on first failure.")
 @click.option("--show_success", is_flag=True, default=False, help="Show successful outputs")
@@ -150,7 +176,7 @@ def lint(
     show_success: bool,
     parallel: bool,
     ignore_linter_weight: bool,
-):
+):  # pylint: disable=too-many-arguments
     """Run one or more Linters specified in the CONF file."""
     if parallel is True:
         raise NotImplementedError
