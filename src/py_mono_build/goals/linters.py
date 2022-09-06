@@ -68,6 +68,7 @@ class Black(Linter):
 
     name: str = "black"
     parallel_run: bool = False
+    weight: int = 99
 
     def run(self):
         """
@@ -163,6 +164,7 @@ class ISort(Linter):
 
     name: str = "isort"
     parallel_run: bool = False
+    weight = 100
 
     def run(self):
         """
@@ -253,6 +255,7 @@ class PyDocStringFormatter(Linter):
 
     name: str = "py_doc_string_formatter"
     parallel_run: bool = False
+    weight = 98
 
     def run(self):
         """

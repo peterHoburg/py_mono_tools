@@ -140,12 +140,16 @@ def init():
     NOTE: All linters labeled as parallel_run=False will be run BEFORE ones marked as True.
     """,
 )
+@click.option(
+    "--ignore_linter_weight", is_flag=True, default=False, help="Ignores linter weight and runs in the order in CONF."
+)
 def lint(
     check: bool,
     specific: t.List[str],
     fail_fast: bool,
     show_success: bool,
     parallel: bool,
+    ignore_linter_weight: bool,
 ):
     """Run one or more Linters specified in the CONF file."""
     if parallel is True:
@@ -159,7 +163,8 @@ def lint(
     cleaned_spec = []
     for linter_name in specific:
         cleaned_spec.append(linter_name.strip().lower())
-
+    if ignore_linter_weight is False:
+        linters.sort(key=lambda x: x.weight, reverse=True)
     for linter in linters:
         if cleaned_spec and linter.name.strip().lower() not in cleaned_spec:
             logger.debug("Linters requested: %s", cleaned_spec)

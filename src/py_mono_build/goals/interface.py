@@ -8,6 +8,7 @@ class Linter(abc.ABC):
 
     name: str
     parallel_run: bool
+    weight: int = 0
 
     def __init__(self, args: t.Optional[t.List[str]] = None):
         """Will initialize the linter.
