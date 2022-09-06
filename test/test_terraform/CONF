@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_build.goals.linters import DEFAULT_PYTHON
+from py_mono_build.goals.linters import DEFAULT_TERRAFORM
 
 
 path = pathlib.Path(__file__).parent
@@ -11,7 +11,7 @@ NAME = "py_mono_build"
 BACKEND = "system"
 
 LINT = [
-    *DEFAULT_PYTHON,
+    *DEFAULT_TERRAFORM,
 ]
 TEST = []
 DEPLOY = []

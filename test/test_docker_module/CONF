@@ -7,8 +7,8 @@ from py_mono_build.goals.linters import DEFAULT_PYTHON
 
 path = pathlib.Path(__file__).parent
 
-NAME = "py_mono_build"
-BACKEND = "system"
+NAME = "test_docker_module"
+BACKEND = "docker"
 
 LINT = [
     *DEFAULT_PYTHON,

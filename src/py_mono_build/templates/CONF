@@ -21,6 +21,7 @@ from py_mono_build.goals.linters import (  # DEFAULT_PYTHON,; DEFAULT_TERRAFORM,
 path = pathlib.Path(__file__).parent
 
 NAME = "<EXAMPLE>"
+BACKEND = "<docker,system>"
 
 # You can list each linter or use one of the default linter lists.
 # NOTE: ORDER DOES MATTER!

@@ -20,6 +20,25 @@ from py_mono_build.goals.interface import Linter
 logger.info("Starting main")
 
 
+def _find_linters():
+    logger.debug("Finding linters")
+    linter_classes = inspect.getmembers(linters_mod, inspect.isclass)
+    linter_instances = [
+        linter_class[1]()
+        for linter_class in linter_classes
+        if issubclass(linter_class[1], Linter) and linter_class[1] != Linter
+    ]
+    consts.ALL_LINTERS = linter_instances
+
+    for linter in linter_instances:
+        consts.ALL_LINTER_NAMES.append(linter.name)
+
+    logger.debug("Found linters: %s", consts.ALL_LINTER_NAMES)
+
+
+_find_linters()
+
+
 def _load_conf():
     conf_location = f"{consts.EXECUTED_FROM}/CONF"
     logger.debug("CONF location: %s", conf_location)
@@ -69,27 +88,16 @@ def _init_backend(_build_system: str):
     consts.CURRENT_BACKEND = consts.BACKENDS[_build_system]()
 
 
-def _find_linters():
-    logger.debug("Finding linters")
-    linter_classes = inspect.getmembers(linters_mod, inspect.isclass)
-    linter_instances = [
-        linter_class[1]()
-        for linter_class in linter_classes
-        if issubclass(linter_class[1], Linter) and linter_class[1] != Linter
-    ]
-    consts.ALL_LINTERS = linter_instances
-
-    for linter in linter_instances:
-        consts.ALL_LINTER_NAMES.append(linter.name)
-
-    logger.debug("Found linters: %s", consts.ALL_LINTER_NAMES)
-
-
-_find_linters()
-
-
 @click.group()
-@click.option("--backend", default="system", type=str)
+@click.option(
+    "--backend",
+    default=None,
+    type=str,
+    help="""
+Default backend is \"system\".
+This can be set via this flag, the BACKEND var in CONF, or defaulted to system.
+""",
+)
 @click.option("--absolute_path", "-ap", default=None, type=click.Path())
 @click.option("--relative_path", "-rp", default=None, type=click.Path())
 @click.option("--verbose", "-v", default=False, is_flag=True)
@@ -112,6 +120,14 @@ def cli(backend, absolute_path, relative_path, verbose):
         _set_relative_path(relative_path=relative_path)
 
     _load_conf()
+    if backend is None:
+        try:
+            backend = consts.CONF.BACKEND
+        except AttributeError:
+            backend = "system"
+
+    logger.info("Using backed: %s", backend)
+
     _init_backend(backend)
 
 
@@ -124,7 +140,7 @@ def build(force_rebuild, modules):
 
     Docker is the default.
     """
-    print(modules)
+    logger.info(modules)
     consts.CURRENT_BACKEND.build(force_rebuild=force_rebuild)
 
 
@@ -150,9 +166,10 @@ def init():
     help=f"""
     Specify one or more linters to run. NOTE: The linter MUST be listed in the respected CONF file.
 
-    Linters:
+    All Linters:
     {consts.ALL_LINTER_NAMES}
     """,
+    shell_complete=consts.ALL_LINTER_NAMES,
 )
 @click.option("--fail_fast", "-ff", is_flag=True, default=False, help="Stop on first failure.")
 @click.option("--show_success", is_flag=True, default=False, help="Show successful outputs")
