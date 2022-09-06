@@ -27,9 +27,7 @@ class System(Backend):
         ) as process:
 
             stdout_data, stderr_data = process.communicate()
-        return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode(
-            "utf-8"
-        )
+        return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode("utf-8")
 
     def interactive(self):
         """Will do nothing for the system backend."""

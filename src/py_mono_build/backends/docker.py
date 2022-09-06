@@ -50,9 +50,7 @@ class Docker(Backend):
         ) as process:
 
             stdout_data, stderr_data = process.communicate()
-        return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode(
-            "utf-8"
-        )
+        return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode("utf-8")
 
     def interactive(self):
         """Not implemented for the docker backend."""

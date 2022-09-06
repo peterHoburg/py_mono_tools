@@ -57,9 +57,7 @@ def _set_relative_path(relative_path: str):
     logger.info("Overwriting execution root path: %s", relative_path)
 
     # pylint: disable=invalid-name
-    consts.EXECUTED_FROM = consts.EXECUTED_FROM.joinpath(
-        pathlib.Path(relative_path).resolve()
-    )
+    consts.EXECUTED_FROM = consts.EXECUTED_FROM.joinpath(pathlib.Path(relative_path).resolve())
     os.chdir(consts.EXECUTED_FROM)
 
 
@@ -136,12 +134,8 @@ def init():
     default=[],
     help="Specify one or more linters to run. NOTE: The linter MUST be listed in the respected CONF file.",
 )
-@click.option(
-    "--fail_fast", "-ff", is_flag=True, default=False, help="Stop on first failure."
-)
-@click.option(
-    "--show_success", is_flag=True, default=False, help="Show successful outputs"
-)
+@click.option("--fail_fast", "-ff", is_flag=True, default=False, help="Stop on first failure.")
+@click.option("--show_success", is_flag=True, default=False, help="Show successful outputs")
 @click.option(
     "--parallel",
     is_flag=True,

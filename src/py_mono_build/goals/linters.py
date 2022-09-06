@@ -14,11 +14,7 @@ def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
     logs = ""
 
     logger.debug("Running %s: %s", linter, args)
-    if (
-        len(args) > 0
-        and "docker" == args[0]
-        and consts.CURRENT_BACKEND.name == "docker"  # type: ignore
-    ):
+    if len(args) > 0 and "docker" == args[0] and consts.CURRENT_BACKEND.name == "docker":  # type: ignore
         logger.debug("Bypassing docker backend for system backend. Linter: %s", linter)
         return_code, returned_logs = consts.BACKENDS["system"]().run(args)  # type: ignore
     else:
@@ -502,7 +498,7 @@ class TFSec(Linter):
 
 DEFAULT_PYTHON = [
     ISort(),
-    Black(),
+    Black(args=[f"--line-length={MAX_LINE_LENGTH}"]),
     PyDocStringFormatter(),
     Bandit(),
     Flake8(args=["--ignore=E203", "--ignore=W503"]),
