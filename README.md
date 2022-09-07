@@ -2,7 +2,7 @@
 
 ## Instillation
 
-`pip install py_mono_build`
+`pip install py-mono-build`
 
 ## Usage
 
