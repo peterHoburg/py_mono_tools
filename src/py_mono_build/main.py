@@ -133,7 +133,7 @@ def cli(backend, absolute_path, relative_path, verbose):
 
 @cli.command()
 @click.option("--force-rebuild", is_flag=True, default=False)
-@click.option("--modules", multiple=True, type=list[str], default=["all"])
+@click.option("--modules", multiple=True, type=t.List[str], default=["all"])
 def build(force_rebuild, modules):
     """
     Run the build process for the specified build system.
