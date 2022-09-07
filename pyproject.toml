@@ -12,7 +12,7 @@ maintainers = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
 readme = "README.md"
 homepage = "https://github.com/peterHoburg/py-mono-build"
 repository = "https://github.com/peterHoburg/py-mono-build"
-#documentation = ""
+documentation = "https://peterhoburg.github.io/py-mono-build/"
 keywords = ["build", "mono-repo", "cli"]
 classifiers = [
     "Development Status :: 3 - Alpha",
