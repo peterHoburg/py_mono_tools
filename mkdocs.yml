@@ -1,7 +1,15 @@
 site_name: Py Mono Repo
+repo_url: https://github.com/peterHoburg/py-mono-build
 
 theme:
+  language: en
   name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.top
+    - toc.integrate
   palette:
 
     # Palette toggle for light mode
@@ -21,5 +29,10 @@ theme:
 
 plugins:
   - search
+#  - offline
   - minify:
       minify_html: true
+
+
+markdown_extensions:
+    - mkdocs-click

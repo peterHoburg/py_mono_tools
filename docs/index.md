@@ -1,3 +1,6 @@
-# Py Mono Repo
+# Command Overview
 
-Under construction
+
+::: mkdocs-click
+    :module: py_mono_build.main
+    :command: cli
