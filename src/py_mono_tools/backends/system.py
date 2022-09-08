@@ -2,8 +2,8 @@
 import subprocess  # nosec B404
 import typing as t
 
-from py_mono_build.backends.interface import Backend
-from py_mono_build.config import consts
+from py_mono_tools.backends.interface import Backend
+from py_mono_tools.config import consts
 
 
 class System(Backend):

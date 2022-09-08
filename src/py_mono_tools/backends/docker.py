@@ -4,8 +4,8 @@ import subprocess  # nosec B404
 import sys
 import typing as t
 
-from py_mono_build.backends.interface import Backend
-from py_mono_build.config import consts, logger
+from py_mono_tools.backends.interface import Backend
+from py_mono_tools.config import consts, logger
 
 
 # pylint: disable=R0801

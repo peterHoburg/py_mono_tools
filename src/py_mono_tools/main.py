@@ -11,10 +11,10 @@ import typing as t
 
 import click
 
-from py_mono_build.backends import Docker, System
-from py_mono_build.config import consts, logger
-from py_mono_build.goals import linters as linters_mod
-from py_mono_build.goals.interface import Linter
+from py_mono_tools.backends import Docker, System
+from py_mono_tools.config import consts, logger
+from py_mono_tools.goals import linters as linters_mod
+from py_mono_tools.goals.interface import Linter
 
 
 logger.info("Starting main")
@@ -102,7 +102,7 @@ This can be set via this flag, the BACKEND var in CONF, or defaulted to system.
 @click.option("--relative_path", "-rp", default=None, type=click.Path())
 @click.option("--verbose", "-v", default=False, is_flag=True)
 def cli(backend, absolute_path, relative_path, verbose):
-    """Py mono build is a CLI tool that simplifies using python in a monorepo."""
+    """Py mono tool is a CLI tool that simplifies using python in a monorepo."""
     logger.info("Starting cli")
 
     if "--help" in sys.argv or "-h" in sys.argv:

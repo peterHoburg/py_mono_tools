@@ -4,11 +4,11 @@ import os
 import pathlib
 import typing as t
 
-from py_mono_build.goals.interface import Linter
+from py_mono_tools.goals.interface import Linter
 
 
 if t.TYPE_CHECKING:
-    from py_mono_build.backends.interface import Backend
+    from py_mono_tools.backends.interface import Backend
 
 
 # pylint: disable=too-few-public-methods

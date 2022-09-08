@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_build.goals.linters import DEFAULT_TERRAFORM
+from py_mono_tools.goals.linters import DEFAULT_TERRAFORM
 
 
 path = pathlib.Path(__file__).parent
 
-NAME = "py_mono_build"
+NAME = "py_mono_tools"
 BACKEND = "system"
 
 LINT = [

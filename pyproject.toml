@@ -3,16 +3,16 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "py_mono_build"
-version = "0.0.9"
+name = "py_mono_tools"
+version = "0.0.1"
 description = "A CLI designed to make it easier to work in a python mono repo"
 license = "GPL-3.0-or-later"
 authors = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
 maintainers = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
 readme = "README.md"
-homepage = "https://github.com/peterHoburg/py-mono-build"
-repository = "https://github.com/peterHoburg/py-mono-build"
-documentation = "https://peterhoburg.github.io/py-mono-build/"
+homepage = "https://github.com/peterHoburg/py-mono-tools"
+repository = "https://github.com/peterHoburg/py-mono-tools"
+documentation = "https://peterhoburg.github.io/py-mono-tools/"
 keywords = ["build", "mono-repo", "cli"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -21,12 +21,12 @@ classifiers = [
 ]
 
 packages = [
-    { include = "py_mono_build", from = "src" }
+    { include = "py_mono_tools", from = "src" }
 ]
 
 [tool.poetry.scripts]
-py_mono_build = "py_mono_build.main:cli"
-pmb = "py_mono_build.main:cli"
+py_mono_tools = "py_mono_tools.main:cli"
+pmt = "py_mono_tools.main:cli"
 
 [tool.poetry.dependencies]
 python = "^3.8"

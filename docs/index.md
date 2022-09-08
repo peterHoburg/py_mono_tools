@@ -2,5 +2,5 @@
 
 
 ::: mkdocs-click
-    :module: py_mono_build.main
+    :module: py_mono_tools.main
     :command: cli

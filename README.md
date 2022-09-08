@@ -1,8 +1,8 @@
-# Python mono build
+# Python Mono Tools
 
 ## Instillation
 
-`pip install py-mono-build`
+`pip install py-mono-tools`
 
 ## Usage
 
@@ -10,4 +10,4 @@
 
 # More information
 
-For more information, please go the GitHub page. https://peterhoburg.github.io/py-mono-build/
+For more information, please go the GitHub page. https://peterhoburg.github.io/py-mono-tools/
