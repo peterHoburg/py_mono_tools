@@ -20,7 +20,7 @@ jobs:
         run: pip install poetry
 
       - name: Bump version
-        run: poetry version minor
+        run: poetry version patch
         working-directory: .
 
       - name: Set git config
