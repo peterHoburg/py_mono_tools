@@ -4,15 +4,15 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "py_mono_tools"
-version = "0.0.1"
+version = "0.0.2"
 description = "A CLI designed to make it easier to work in a python mono repo"
 license = "GPL-3.0-or-later"
 authors = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
 maintainers = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
 readme = "README.md"
-homepage = "https://github.com/peterHoburg/py-mono-tools"
-repository = "https://github.com/peterHoburg/py-mono-tools"
-documentation = "https://peterhoburg.github.io/py-mono-tools/"
+homepage = "https://github.com/peterHoburg/py_mono_tools"
+repository = "https://github.com/peterHoburg/py_mono_tools"
+documentation = "https://peterhoburg.github.io/py_mono_tools/"
 keywords = ["build", "mono-repo", "cli"]
 classifiers = [
     "Development Status :: 3 - Alpha",

@@ -10,4 +10,4 @@
 
 # More information
 
-For more information, please go the GitHub page. https://peterhoburg.github.io/py-mono-tools/
+For more information, please go the GitHub page. https://peterhoburg.github.io/py_mono_tools/

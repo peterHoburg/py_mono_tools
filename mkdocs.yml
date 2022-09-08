@@ -1,5 +1,5 @@
 site_name: Py Mono Repo
-repo_url: https://github.com/peterHoburg/py-mono-tools
+repo_url: https://github.com/peterHoburg/py_mono_tools
 
 theme:
   language: en
