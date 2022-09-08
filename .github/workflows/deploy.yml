@@ -60,10 +60,11 @@ jobs:
       - name: Install Poetry
         run: pip install poetry
 
+      - name: Configure poetry
+        run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+
       - name: Build and publish package
         run: poetry publish --build
-        env:
-          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}
 
   docs:
     needs: tag_release
