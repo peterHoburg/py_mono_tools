@@ -47,6 +47,7 @@ jobs:
         run: git push origin --tags
 
   push_to_pypi:
+    needs: tag_release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,8 +62,11 @@ jobs:
 
       - name: Build and publish package
         run: poetry publish --build
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}
 
   docs:
+    needs: tag_release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
