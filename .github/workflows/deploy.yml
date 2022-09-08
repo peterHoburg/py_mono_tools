@@ -1,0 +1,74 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+
+  tag_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.7
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Bump version
+        run: poetry version minor
+        working-directory: .
+
+      - name: Set git config
+        run: |
+          git config --global user.name 'Peter Hoburg'
+          git config --global user.email 'peterHoburg@users.noreply.github.com'
+
+      - name: Add changed file
+        run: git add pyproject.toml
+        working-directory: .
+
+      - name: Git commit
+        run: git commit -m "Auto update package version to $(poetry version -s)"
+        working-directory: .
+
+      - name: Git push
+        run: git push
+
+      - name: Git tag
+        run: git tag $(poetry version -s)
+        working-directory: .
+
+      - name: Push tags
+        run: git push origin --tags
+
+  push_to_pypi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.7
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Build and publish package
+        run: poetry publish --build
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.7
+      - run: pip install poetry
+      - run: poetry install --with docs
+      - run: poetry run mkdocs gh-deploy --force
