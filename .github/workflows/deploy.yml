@@ -25,8 +25,8 @@ jobs:
 
       - name: Set git config
         run: |
-          git config --global user.name 'Peter Hoburg'
-          git config --global user.email 'peterHoburg@users.noreply.github.com'
+          git config --global user.name 'tag_release_gh_action'
+          git config --global user.email 'peterHoburg+tag_release_gh_action@users.noreply.github.com'
 
       - name: Add changed file
         run: git add pyproject.toml
