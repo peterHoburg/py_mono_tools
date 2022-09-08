@@ -6,7 +6,7 @@
 
 ## Usage
 
-`pmb lint`
+`pmt lint`
 
 # More information
 

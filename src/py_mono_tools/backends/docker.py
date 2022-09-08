@@ -31,7 +31,7 @@ class Docker(Backend):
             "docker",
             "run",
             "-it",
-            "pmb_docker_backend",
+            "pmt_docker_backend",
         ]
         for arg in args:
             if isinstance(arg, str):
@@ -72,7 +72,7 @@ class Docker(Backend):
                 "--build-arg",
                 f"USER_UID={uid}",
                 "-t",
-                "pmb_docker_backend",
+                "pmt_docker_backend",
                 ".",
             ],
             env=env,

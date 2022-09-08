@@ -57,7 +57,7 @@ class ColorFormatting(logging.Formatter):
         return formatter.format(record)
 
 
-logger = logging.getLogger("PMB")
+logger = logging.getLogger("PMT")
 logger.setLevel(logging.INFO)
 
 stream = logging.StreamHandler()
