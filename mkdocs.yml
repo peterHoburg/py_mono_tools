@@ -4,7 +4,7 @@ site_url: https://peterhoburg.github.io/py_mono_tools
 nav:
   - Home: index.md
   - Concepts: concepts.md
-  - Commands: commands.md
+  - Goals: goals.md
 
 
 theme:
