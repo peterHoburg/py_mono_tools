@@ -4,7 +4,7 @@ site_url: https://peterhoburg.github.io/py_mono_tools
 nav:
   - Home: index.md
   - Concepts: concepts.md
-  - Goals: goals.md
+  - CLI Reference: cli.md
 
 
 theme:
@@ -13,23 +13,23 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.tabs
+#    - navigation.tabs
+#    - navigation.tabs.sticky
+#    - navigation.sections
     - navigation.top
-    - toc.integrate
+#    - toc.integrate
   palette:
-    # Palette toggle for light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+    - scheme: default
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
 
-    # Palette toggle for dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
+
 
 
 plugins:
@@ -40,6 +40,7 @@ plugins:
 
 
 markdown_extensions:
-    - mkdocs-click
-    - toc:
-          permalink: true
+  - attr_list
+  - mkdocs-click
+  - toc:
+        permalink: true

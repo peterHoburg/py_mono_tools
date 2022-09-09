@@ -6,4 +6,4 @@
     :style: plain
     :remove_ascii_art: false
     :show_hidden: false
-    :list_subcommands: false
+    :list_subcommands: true
