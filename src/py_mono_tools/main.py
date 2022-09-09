@@ -132,31 +132,6 @@ def cli(backend, absolute_path, relative_path, verbose):
 
 
 @cli.command()
-@click.option("--force-rebuild", is_flag=True, default=False)
-@click.option("--modules", multiple=True, type=t.List[str], default=["all"])
-def build(force_rebuild, modules):
-    """
-    Run the build process for the specified build system.
-
-    Docker is the default.
-    """
-    logger.info(modules)
-    consts.CURRENT_BACKEND.build(force_rebuild=force_rebuild)
-
-
-@cli.command()
-def deploy():
-    """Run the specified build and deploy in the specific CONF file."""
-    raise NotImplementedError
-
-
-@cli.command()
-def init():
-    """Initialize the current directory with the necessary files."""
-    raise NotImplementedError
-
-
-@cli.command()
 @click.option("--check", is_flag=True, default=False)
 @click.option(
     "--specific",
@@ -194,7 +169,16 @@ def lint(
     parallel: bool,
     ignore_linter_weight: bool,
 ):  # pylint: disable=too-many-arguments
-    """Run one or more Linters specified in the CONF file."""
+    """
+Run one or more Linters specified in the CONF file.
+
+Examples:
+```bash
+pmt lint
+pmt lint -s black -s flake8
+pmt -rp ./some/path lint
+```
+    """
     if parallel is True:
         raise NotImplementedError
 
@@ -234,49 +218,74 @@ def lint(
     logger.info("Linting complete")
 
 
-@cli.group()
-def new():
-    """Create a new module with the specified name."""
-    raise NotImplementedError
-
-
-@new.command()
-def migration():
-    """Generate an Alembic Database migration."""
-    raise NotImplementedError
-
-
-@new.command()
-def package():
-    """Not implemented."""
-    raise NotImplementedError
-
-
-@cli.command()
-def run():
-    """Not implemented."""
-    raise NotImplementedError
-
-
-@cli.command()
-def interactive():
-    """Drop into an interactive session in your specified backend."""
-    raise NotImplementedError
-
-
-@cli.command()
-def setup():
-    """Not implemented."""
-    raise NotImplementedError
-
-
-@cli.command()
-def test():
-    """Run all the tests specified in the CONF file."""
-    raise NotImplementedError
-
-
-@cli.command()
-def validate():
-    """Not implemented."""
-    raise NotImplementedError
+# @cli.command()
+# @click.option("--force-rebuild", is_flag=True, default=False)
+# @click.option("--modules", multiple=True, type=t.List[str], default=["all"])
+# def build(force_rebuild, modules):
+#     """
+#     Run the build process for the specified build system.
+#
+#     Docker is the default.
+#     """
+#     logger.info(modules)
+#     consts.CURRENT_BACKEND.build(force_rebuild=force_rebuild)
+#
+#
+# @cli.command()
+# def deploy():
+#     """Run the specified build and deploy in the specific CONF file."""
+#     raise NotImplementedError
+#
+#
+# @cli.command()
+# def init():
+#     """Initialize the current directory with the necessary files."""
+#     raise NotImplementedError
+#
+#
+# @cli.group()
+# def new():
+#     """Create a new module with the specified name."""
+#     raise NotImplementedError
+#
+#
+# @new.command()
+# def migration():
+#     """Generate an Alembic Database migration."""
+#     raise NotImplementedError
+#
+#
+# @new.command()
+# def package():
+#     """Not implemented."""
+#     raise NotImplementedError
+#
+#
+# @cli.command()
+# def run():
+#     """Not implemented."""
+#     raise NotImplementedError
+#
+#
+# @cli.command()
+# def interactive():
+#     """Drop into an interactive session in your specified backend."""
+#     raise NotImplementedError
+#
+#
+# @cli.command()
+# def setup():
+#     """Not implemented."""
+#     raise NotImplementedError
+#
+#
+# @cli.command()
+# def test():
+#     """Run all the tests specified in the CONF file."""
+#     raise NotImplementedError
+#
+#
+# @cli.command()
+# def validate():
+#     """Not implemented."""
+#     raise NotImplementedError

@@ -1,0 +1,9 @@
+::: mkdocs-click
+    :module: py_mono_tools.main
+    :command: cli
+    :prog_name: pmt
+    :depth: 0
+    :style: plain
+    :remove_ascii_art: false
+    :show_hidden: false
+    :list_subcommands: false

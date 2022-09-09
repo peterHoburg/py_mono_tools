@@ -1,5 +1,11 @@
 site_name: Py Mono Repo
 repo_url: https://github.com/peterHoburg/py_mono_tools
+site_url: https://peterhoburg.github.io/py_mono_tools
+nav:
+  - Home: index.md
+  - Concepts: concepts.md
+  - Commands: commands.md
+
 
 theme:
   language: en
@@ -11,7 +17,6 @@ theme:
     - navigation.top
     - toc.integrate
   palette:
-
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -36,3 +41,5 @@ plugins:
 
 markdown_extensions:
     - mkdocs-click
+    - toc:
+          permalink: true

@@ -1,6 +1,13 @@
-# Command Overview
+# Installation
+
+`pip install py-mono-tools`
+
+To install all the python linters:
+
+`pip install py-mono-tools[linters_python]`
+
+# Basic Usage
+
+## Linting
 
 
-::: mkdocs-click
-    :module: py_mono_tools.main
-    :command: cli
