@@ -2,7 +2,7 @@
 import typing as t
 
 from py_mono_tools.config import consts, GREEN, logger, RED, RESET
-from py_mono_tools.goals.interface import Linter
+from py_mono_tools.goals.interface import Language, Linter
 
 
 CHECK_STRING = " check"
@@ -42,6 +42,7 @@ class Bandit(Linter):
 
     name: str = "bandit"
     parallel_run: bool = True
+    language = Language.PYTHON
 
     def run(self):
         """Will run the bandit linter recursively."""
@@ -69,6 +70,7 @@ class Black(Linter):
     name: str = "black"
     parallel_run: bool = False
     weight: int = 99
+    language = Language.PYTHON
 
     def run(self):
         """
@@ -115,6 +117,7 @@ class Flake8(Linter):
 
     name: str = "flake8"
     parallel_run: bool = False
+    language = Language.PYTHON
 
     def __init__(self, args: t.Optional[t.List[str]] = None):
         """Will set the max complexity and max line length."""
@@ -165,6 +168,7 @@ class ISort(Linter):
     name: str = "isort"
     parallel_run: bool = False
     weight = 100
+    language = Language.PYTHON
 
     def run(self):
         """
@@ -203,6 +207,7 @@ class Mccabe(Linter):
 
     name: str = "mccabe"
     parallel_run: bool = True
+    language = Language.PYTHON
 
     def run(self):
         """Will run the mccabe linter."""
@@ -230,6 +235,7 @@ class Mypy(Linter):
 
     name: str = "mypy"
     parallel_run: bool = True
+    language = Language.PYTHON
 
     def run(self):
         """Will run the mypy linter."""
@@ -256,6 +262,7 @@ class PyDocStringFormatter(Linter):
     name: str = "py_doc_string_formatter"
     parallel_run: bool = False
     weight = 98
+    language = Language.PYTHON
 
     def run(self):
         """
@@ -297,6 +304,7 @@ class Pydocstyle(Linter):
 
     name: str = "pydocstyle"
     parallel_run: bool = True
+    language = Language.PYTHON
 
     def run(self):
         """Will run the pydocstyle linter."""
@@ -321,6 +329,7 @@ class Pyflakes(Linter):
 
     name: str = "pyflakes"
     parallel_run: bool = True
+    language = Language.PYTHON
 
     def run(self):
         """Will run the pyflakes linter."""
@@ -346,6 +355,7 @@ class Pylint(Linter):
 
     name: str = "pylint"
     parallel_run: bool = True
+    language = Language.PYTHON
 
     def run(self):
         """Will run the pylint linter."""
@@ -373,6 +383,7 @@ class CheckOV(Linter):
 
     name: str = "checkov"
     parallel_run: bool = True
+    language = Language.TERRAFORM
 
     def run(self):
         """Will run the checkov linter in a docker container."""
@@ -409,6 +420,7 @@ class Terrascan(Linter):
 
     name: str = "terrascan"
     parallel_run: bool = True
+    language = Language.TERRAFORM
 
     def run(self):
         """Will run the terrascan linter in a docker container."""
@@ -446,6 +458,7 @@ class TFLint(Linter):
 
     name: str = "tflint"
     parallel_run: bool = True
+    language = Language.TERRAFORM
 
     def run(self):
         """Will run the tflint linter in a docker container."""
@@ -478,6 +491,7 @@ class TFSec(Linter):
 
     name: str = "tfsec"
     parallel_run: bool = True
+    language = Language.TERRAFORM
 
     def run(self):
         """Will run the tfsec linter in a docker container."""

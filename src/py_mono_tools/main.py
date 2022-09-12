@@ -16,7 +16,7 @@ import click
 from py_mono_tools.backends import Docker, System
 from py_mono_tools.config import consts, logger
 from py_mono_tools.goals import linters as linters_mod
-from py_mono_tools.goals.interface import Linter
+from py_mono_tools.goals.interface import Language, Linter
 
 
 logger.info("Starting main")
@@ -30,6 +30,7 @@ def _find_linters():
         for linter_class in linter_classes
         if issubclass(linter_class[1], Linter) and linter_class[1] != Linter
     ]
+    # pylint: disable=invalid-name
     consts.ALL_LINTERS = linter_instances
 
     for linter in linter_instances:
@@ -80,15 +81,15 @@ def _set_relative_path(relative_path: str):
 def _set_path_from_conf_name(name: str):
     logger.info("Setting path from conf name: %s", name)
 
-    for dirpath, dirnames, filenames in os.walk("."):
+    for rel_path, _, filenames in os.walk("."):
         for filename in filenames:
             if filename == "CONF":
-                path = pathlib.Path(dirpath).resolve()
+                path = pathlib.Path(rel_path).resolve()
                 mod = _load_conf(str(path))
                 logger.debug("Found CONF: %s in %s", mod.NAME, path)
                 if mod.NAME.strip().lower() == name.strip().lower():
                     logger.debug("Using CONF: %s in %s", mod.NAME, path)
-                    _set_absolute_path(dirpath)
+                    _set_absolute_path(str(path))
                     return
 
 
@@ -102,6 +103,28 @@ def _init_backend(_build_system: str):
     }
 
     consts.CURRENT_BACKEND = consts.BACKENDS[_build_system]()
+
+
+def _filter_linters(specific_linters: t.List[str], language: t.Optional[Language]) -> t.List[Linter]:
+    conf_linters: t.List[Linter] = consts.CONF.LINT  # type: ignore
+    logger.debug("Linters: %s", conf_linters)
+    linters_to_run: t.List[Linter] = []
+    specific_linters = [s.strip().lower() for s in specific_linters]
+
+    if language is None and not specific_linters:
+        logger.debug("No language or specific linters specified. Running all linters.")
+        linters_to_run = conf_linters
+    else:
+        logger.debug("Language: %s, specific: %s", language, specific_linters)
+        for linter in conf_linters:
+            if linter.name.strip().lower() in specific_linters:
+                linters_to_run.append(linter)
+                continue
+            if linter.language == language:
+                linters_to_run.append(linter)
+
+    logger.debug("Linters to run: %s", linters_to_run)
+    return linters_to_run
 
 
 @click.group()
@@ -183,6 +206,7 @@ def cli(backend, absolute_path, relative_path, name, verbose):
 @click.option(
     "--ignore_linter_weight", is_flag=True, default=False, help="Ignores linter weight and runs in the order in CONF."
 )
+@click.option("--language", "-l", default=None, type=Language, help="Specify a language to run linters for.")
 def lint(
     check: bool,
     specific: t.List[str],
@@ -190,6 +214,7 @@ def lint(
     show_success: bool,
     parallel: bool,
     ignore_linter_weight: bool,
+    language: t.Optional[Language],
 ):  # pylint: disable=too-many-arguments
     """
     Run one or more Linters specified in the CONF file.
@@ -199,6 +224,7 @@ def lint(
     pmt lint
     pmt lint -s black -s flake8
     pmt -rp ./some/path lint
+    pmt -n py_mono_tools lint -l python
     ```
     """
     if parallel is True:
@@ -206,20 +232,12 @@ def lint(
 
     logger.info("Starting lint")
 
-    linters: t.List[Linter] = consts.CONF.LINT  # type: ignore
-    logger.debug("Linters: %s", linters)
+    linters_to_run = _filter_linters(specific_linters=specific, language=language)
 
-    cleaned_spec = []
-    for linter_name in specific:
-        cleaned_spec.append(linter_name.strip().lower())
     if ignore_linter_weight is False:
-        linters.sort(key=lambda x: x.weight, reverse=True)
-    for linter in linters:
-        if cleaned_spec and linter.name.strip().lower() not in cleaned_spec:
-            logger.debug("Linters requested: %s", cleaned_spec)
-            logger.debug("Skipping linter: %s", linter.name)
-            continue
+        linters_to_run.sort(key=lambda x: x.weight, reverse=True)
 
+    for linter in linters_to_run:
         logger.debug("Linting: %s", linter)
         if check is True:
             logs, return_code = linter.check()
