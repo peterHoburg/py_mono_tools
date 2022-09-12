@@ -30,6 +30,7 @@ def _find_linters():
         for linter_class in linter_classes
         if issubclass(linter_class[1], Linter) and linter_class[1] != Linter
     ]
+    # pylint: disable=invalid-name
     consts.ALL_LINTERS = linter_instances
 
     for linter in linter_instances:
@@ -80,15 +81,15 @@ def _set_relative_path(relative_path: str):
 def _set_path_from_conf_name(name: str):
     logger.info("Setting path from conf name: %s", name)
 
-    for dirpath, dirnames, filenames in os.walk("."):
+    for rel_path, _, filenames in os.walk("."):
         for filename in filenames:
             if filename == "CONF":
-                path = pathlib.Path(dirpath).resolve()
+                path = pathlib.Path(rel_path).resolve()
                 mod = _load_conf(str(path))
                 logger.debug("Found CONF: %s in %s", mod.NAME, path)
                 if mod.NAME.strip().lower() == name.strip().lower():
                     logger.debug("Using CONF: %s in %s", mod.NAME, path)
-                    _set_absolute_path(dirpath)
+                    _set_absolute_path(str(path))
                     return
 
 

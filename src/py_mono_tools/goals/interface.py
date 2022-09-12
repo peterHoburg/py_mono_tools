@@ -1,6 +1,14 @@
 """Contains the interfaces that goals will implement."""
 import abc
 import typing as t
+from enum import Enum
+
+
+class Language(Enum):
+    """The languages that the linters can check."""
+
+    TERRAFORM = "terraform"
+    PYTHON = "python"
 
 
 class Linter(abc.ABC):
@@ -8,6 +16,7 @@ class Linter(abc.ABC):
 
     name: str
     parallel_run: bool
+    language: Language
     weight: int = 0
 
     def __init__(self, args: t.Optional[t.List[str]] = None):
