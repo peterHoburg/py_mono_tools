@@ -1,11 +1,11 @@
 site_name: Py Mono Repo
-repo_url: https://github.com/peterHoburg/py_mono_tools
 site_url: https://peterhoburg.github.io/py_mono_tools
+repo_url: https://github.com/peterHoburg/py_mono_tools
+
 nav:
   - Home: index.md
   - Concepts: concepts.md
   - CLI Reference: cli.md
-
 
 theme:
   language: en
@@ -29,18 +29,19 @@ theme:
         icon: material/brightness-7
         name: Switch to dark mode
 
-
-
-
 plugins:
   - search
 #  - offline
   - minify:
       minify_html: true
 
-
 markdown_extensions:
   - attr_list
   - mkdocs-click
   - toc:
         permalink: true
+
+watch:
+  - docs
+  - mkdocs.yml
+  - src

@@ -5,9 +5,11 @@ import importlib.util
 import inspect
 import logging
 import os
+import os.path
 import pathlib
 import sys
 import typing as t
+from types import ModuleType
 
 import click
 
@@ -39,8 +41,8 @@ def _find_linters():
 _find_linters()
 
 
-def _load_conf():
-    conf_location = f"{consts.EXECUTED_FROM}/CONF"
+def _load_conf(conf_path: str) -> ModuleType:
+    conf_location = f"{conf_path}/CONF"
     logger.debug("CONF location: %s", conf_location)
 
     loader = importlib.machinery.SourceFileLoader("CONF", conf_location)
@@ -48,8 +50,7 @@ def _load_conf():
     mod = importlib.util.module_from_spec(spec)  # type: ignore
     loader.exec_module(mod)
 
-    # pylint: disable=invalid-name
-    consts.CONF = mod
+    return mod
 
 
 def _init_logger(verbose: bool):
@@ -76,6 +77,21 @@ def _set_relative_path(relative_path: str):
     os.chdir(consts.EXECUTED_FROM)
 
 
+def _set_path_from_conf_name(name: str):
+    logger.info("Setting path from conf name: %s", name)
+
+    for dirpath, dirnames, filenames in os.walk("."):
+        for filename in filenames:
+            if filename == "CONF":
+                path = pathlib.Path(dirpath).resolve()
+                mod = _load_conf(str(path))
+                logger.debug("Found CONF: %s in %s", mod.NAME, path)
+                if mod.NAME.strip().lower() == name.strip().lower():
+                    logger.debug("Using CONF: %s in %s", mod.NAME, path)
+                    _set_absolute_path(dirpath)
+                    return
+
+
 def _init_backend(_build_system: str):
     logger.debug("Initializing build system: %s", _build_system)
 
@@ -100,8 +116,9 @@ This can be set via this flag, the BACKEND var in CONF, or defaulted to system.
 )
 @click.option("--absolute_path", "-ap", default=None, type=click.Path())
 @click.option("--relative_path", "-rp", default=None, type=click.Path())
+@click.option("--name", "-n", default=None, type=str, help="Name as defined in CONF NAME=...")
 @click.option("--verbose", "-v", default=False, is_flag=True)
-def cli(backend, absolute_path, relative_path, verbose):
+def cli(backend, absolute_path, relative_path, name, verbose):
     """Py mono tool is a CLI tool that simplifies using python in a monorepo."""
     logger.info("Starting cli")
 
@@ -118,8 +135,13 @@ def cli(backend, absolute_path, relative_path, verbose):
         _set_absolute_path(absolute_path=absolute_path)
     elif relative_path is not None:
         _set_relative_path(relative_path=relative_path)
+    elif name is not None:
+        _set_path_from_conf_name(name)
 
-    _load_conf()
+    mod = _load_conf(consts.EXECUTED_FROM)
+
+    # pylint: disable=invalid-name
+    consts.CONF = mod
     if backend is None:
         try:
             backend = consts.CONF.BACKEND
@@ -170,14 +192,14 @@ def lint(
     ignore_linter_weight: bool,
 ):  # pylint: disable=too-many-arguments
     """
-Run one or more Linters specified in the CONF file.
+    Run one or more Linters specified in the CONF file.
 
-Examples:
-```bash
-pmt lint
-pmt lint -s black -s flake8
-pmt -rp ./some/path lint
-```
+    Examples:
+    ```bash
+    pmt lint
+    pmt lint -s black -s flake8
+    pmt -rp ./some/path lint
+    ```
     """
     if parallel is True:
         raise NotImplementedError

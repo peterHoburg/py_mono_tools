@@ -67,10 +67,10 @@ Relative path allows you to run PMT from any directory and have it execute in a 
 Absolute Path. The user running PMT must have read/write access to the directory specified by the absolute path.
 
 ##### CONF file name
-`pmt -cf <NAME_in_CONF_file> ...`
+`pmt -n <NAME_in_CONF_file> ...`
 
-The `-cf` takes the `NAME = "<name>"` variable specified in the CONF file.
-PMT searches for CONF file names ONLY when the `-cf` flag is used.
+The `-n` takes the `NAME = "<name>"` variable specified in the CONF file.
+PMT searches for CONF file names ONLY when the `-n` flag is used.
 
 NOTE: ONLY the current and child directories will be searched for CONF file NAMEs!
 
@@ -85,7 +85,7 @@ DEPLOY = []
 ```
 
 ##### NAME
-`pmt -cf <NAME> lint -s black`
+`pmt -n <NAME> lint -s black`
 
 NAME tells PMT what CONF file to run if you execute PMT using a name.
 
