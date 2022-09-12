@@ -1,4 +1,5 @@
 """The system backend takes the goals instructions and runs them on the local system."""
+import pathlib
 import subprocess  # nosec B404
 import typing as t
 
@@ -17,11 +18,13 @@ class System(Backend):
     def purge(self):
         """Will do nothing for the system backend."""
 
-    def run(self, args: t.List[str]):
+    def run(self, args: t.List[str], workdir: str = None) -> t.Tuple[int, str]:
         """Will run a command on the local system."""
+        if workdir is not None:
+            workdir = str(pathlib.Path(workdir).absolute())
         with subprocess.Popen(  # nosec B603
             args,
-            cwd=consts.EXECUTED_FROM,
+            cwd=workdir or consts.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ) as process:

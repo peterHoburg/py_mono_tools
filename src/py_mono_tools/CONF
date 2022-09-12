@@ -3,9 +3,8 @@
 import pathlib
 
 from py_mono_tools.goals.linters import DEFAULT_PYTHON
+from py_mono_tools.goals.tester import PytestTester
 
-
-path = pathlib.Path(__file__).parent
 
 NAME = "py_mono_tools"
 BACKEND = "system"
@@ -13,5 +12,5 @@ BACKEND = "system"
 LINT = [
     *DEFAULT_PYTHON,
 ]
-TEST = []
+TEST = [PytestTester(test_dir="../../test/py_mono_tools")]
 DEPLOY = []

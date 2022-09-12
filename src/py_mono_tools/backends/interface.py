@@ -20,7 +20,7 @@ class Backend(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def run(self, args: t.List[str]) -> t.Tuple[int, str]:
+    def run(self, args: t.List[str], workdir: str) -> t.Tuple[int, str]:
         """Will run a command in the backend."""
         raise NotImplementedError
 

@@ -4,13 +4,13 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "py_mono_tools"
-version = "0.0.10"
+version = "0.0.13"
 description = "A CLI designed to make it easier to work in a python mono repo"
 license = "GPL-3.0-or-later"
 authors = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
 maintainers = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
 readme = "README.md"
-homepage = "https://github.com/peterHoburg/py_mono_tools"
+homepage = "https://peterhoburg.github.io/py_mono_tools/"
 repository = "https://github.com/peterHoburg/py_mono_tools"
 documentation = "https://peterhoburg.github.io/py_mono_tools/"
 keywords = ["build", "mono-repo", "cli"]
@@ -33,15 +33,6 @@ python = "^3.8"
 
 click = "^8"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.1.3"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs-material = "^8.4.2"
-mkdocs-minify-plugin = "^0.5.0"
-mkdocs-click = "^0.8.0"
-
-[tool.poetry.group.linters_python.dependencies]
 bandit = "^1.7.4"
 black = "^22.8.0"
 flake8 = "^5.0.4"
@@ -50,6 +41,23 @@ mypy = "^0.971"
 pydocstringformatter = "^0.7.2"
 pydocstyle = {extras = ["toml"], version = "^6.1.1"}
 pylint = "^2.15.2"
+pytest = "^7.1.3"
+
+
+[tool.poetry.group.dev.dependencies]
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "^8.4.2"
+mkdocs-minify-plugin = "^0.5.0"
+mkdocs-click = "^0.8.0"
+
+[tool.poetry.extras]
+linters-python = ["bandit", "black", "flake8", "isort", "mypy","pydocstringformatter", "pydocstyle[toml]", "pylint"]
+
+
+
+[tool.poetry.group.testers_python.dependencies]
+pytest = "^7.1.3"
 
 [tool.isort]
 profile = "black"

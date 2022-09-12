@@ -40,3 +40,25 @@ class Linter(abc.ABC):
     def check(self):
         """Will run the linter in check mode.This should NEVER change any files."""
         raise NotImplementedError
+
+
+class Tester(abc.ABC):
+    """The interface that all Testers will implement."""
+
+    name: str
+    language: Language
+
+    def __init__(self, args: t.Optional[t.List[str]] = None, test_dir=None):
+        """Will initialize the Tester.
+
+        Args are passed through to the Tester.
+        """
+        if args is None:
+            args = []
+        self._args = args
+        self._test_dir = test_dir
+
+    @abc.abstractmethod
+    def run(self):
+        """Will run the tester."""
+        raise NotImplementedError

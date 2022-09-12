@@ -258,6 +258,17 @@ def lint(
     logger.info("Linting complete")
 
 
+@cli.command()
+def test():
+    """Run all the tests specified in the CONF file."""
+    testers = consts.CONF.TEST
+    for tester in testers:
+        logger.info("Testing: %s", tester.name)
+        logs, return_code = tester.run()
+        logger.info("Test result: %s %s", tester.name, return_code)
+        logger.info(logs)
+
+
 # @cli.command()
 # @click.option("--force-rebuild", is_flag=True, default=False)
 # @click.option("--modules", multiple=True, type=t.List[str], default=["all"])
@@ -316,12 +327,6 @@ def lint(
 # @cli.command()
 # def setup():
 #     """Not implemented."""
-#     raise NotImplementedError
-#
-#
-# @cli.command()
-# def test():
-#     """Run all the tests specified in the CONF file."""
 #     raise NotImplementedError
 #
 #

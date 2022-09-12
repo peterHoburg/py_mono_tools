@@ -25,7 +25,7 @@ class Docker(Backend):
         """Will do nothing for the docker backend."""
         raise NotImplementedError
 
-    def run(self, args: t.List[str]):
+    def run(self, args: t.List[str], workdir: str = None) -> t.Tuple[int, str]:
         """Will run a command in a docker container."""
         commands = [
             "docker",
@@ -33,8 +33,10 @@ class Docker(Backend):
             "-it",
             "pmt_docker_backend",
         ]
+        if workdir:
+            commands.extend(["-w", workdir])
         for arg in args:
-            if isinstance(arg, str):
+            if not isinstance(arg, str):
                 commands.append("/opt/")
             else:
                 commands.append(arg)

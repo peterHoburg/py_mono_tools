@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.8-slim
 ARG USER_UID=1000
 WORKDIR /opt
 
