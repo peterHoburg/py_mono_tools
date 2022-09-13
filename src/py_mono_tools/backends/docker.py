@@ -28,6 +28,7 @@ class Docker(Backend):
 
     def run(self, args: t.List[str], workdir: str = "/opt") -> t.Tuple[int, str]:
         """Will run a command in a docker container."""
+        self.build()
         commands = [
             "docker",
             "run",
