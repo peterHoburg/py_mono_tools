@@ -4,7 +4,6 @@ import pathlib
 
 from py_mono_tools.goals.linters import DEFAULT_PYTHON
 
-
 path = pathlib.Path(__file__).parent
 
 NAME = "test_docker_module"

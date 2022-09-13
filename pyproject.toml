@@ -45,6 +45,7 @@ pytest = "^7.1.3"
 
 
 [tool.poetry.group.dev.dependencies]
+pydevd-pycharm = "^222.4167.4"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^8.4.2"

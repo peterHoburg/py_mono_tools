@@ -3,6 +3,7 @@ import os
 import subprocess  # nosec B404
 import sys
 import typing as t
+from pathlib import PosixPath
 
 from py_mono_tools.backends.interface import Backend
 from py_mono_tools.config import consts, logger
@@ -25,18 +26,21 @@ class Docker(Backend):
         """Will do nothing for the docker backend."""
         raise NotImplementedError
 
-    def run(self, args: t.List[str], workdir: str = None) -> t.Tuple[int, str]:
+    def run(self, args: t.List[str], workdir: str = "/opt") -> t.Tuple[int, str]:
         """Will run a command in a docker container."""
         commands = [
             "docker",
             "run",
+            "--rm",
+            "-w",
+            workdir,
+            "-v",
+            f"{consts.EXECUTED_FROM}:{workdir}",
             "-it",
             "pmt_docker_backend",
         ]
-        if workdir:
-            commands.extend(["-w", workdir])
         for arg in args:
-            if not isinstance(arg, str):
+            if isinstance(arg, PosixPath):
                 commands.append("/opt/")
             else:
                 commands.append(arg)
