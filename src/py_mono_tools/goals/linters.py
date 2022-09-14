@@ -420,7 +420,7 @@ class TerrascanTerraform(Linter):
     NOTE: This will ALWAYS run in a docker container. Terrascan will not be installed on the system.
     """
 
-    name: str = "terrascan"
+    name: str = "terrascan_terraform"
     parallel_run: bool = True
     language = Language.TERRAFORM
 
