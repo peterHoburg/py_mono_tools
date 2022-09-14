@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
-from py_mono_tools.goals.linters import DEFAULT_PYTHON
+from py_mono_tools.goals.linters import DEFAULT_DOCKER, DEFAULT_PYTHON
+
 NAME = "test_docker_module"
 BACKEND = "docker"
 
 LINT = [
     *DEFAULT_PYTHON,
+    *DEFAULT_DOCKER,
 ]
 TEST = []
 DEPLOY = []

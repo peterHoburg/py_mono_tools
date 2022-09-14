@@ -12,7 +12,7 @@ from py_mono_tools.goals.linters import (  # DEFAULT_PYTHON,; DEFAULT_TERRAFORM,
     PyDocStringFormatter,
     Pydocstyle,
     Pylint,
-    Terrascan,
+    TerrascanTerraform,
     TFLint,
     TFSec,
 )
@@ -37,7 +37,7 @@ LINT = [
     Pylint(),
     TFSec(),
     CheckOV(),
-    Terrascan(args=["-d", "./terraform"]),
+    TerrascanTerraform(args=["-d", "./terraform"]),
     TFLint(args=["./terraform/services/aws/modules/networking"]),
 ]
 TEST = []

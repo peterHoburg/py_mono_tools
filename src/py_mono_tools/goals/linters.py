@@ -408,9 +408,11 @@ class CheckOV(Linter):
         return self.run()
 
 
-class Terrascan(Linter):
+class TerrascanTerraform(Linter):
     """
     Terrascan linter.
+
+    Only running on Terraform files
 
     Detect compliance and security violations across Infrastructure as Code
     https://runterrascan.io/docs/
@@ -423,7 +425,7 @@ class Terrascan(Linter):
     language = Language.TERRAFORM
 
     def run(self):
-        """Will run the terrascan linter in a docker container."""
+        """Will run the terrascan linter for terraform in a docker container."""
         args = [
             "docker",
             "run",
@@ -434,12 +436,14 @@ class Terrascan(Linter):
             "/iac",
             "tenable/terrascan",
             "scan",
+            "-i",
+            "terraform",
             *self._args,
         ]
         return _run(self.name, args)
 
     def check(self):
-        """Will run the terrascan linter in a docker container."""
+        """Will run the terrascan linter for terraform in a docker container."""
         return self.run()
 
 
@@ -513,6 +517,93 @@ class TFSec(Linter):
         return self.run()
 
 
+class TerraformFmt(Linter):
+    """
+    Terraform fmt linter.
+
+    https://www.terraform.io/cli/commands/fmt
+
+    NOTE: This will ALWAYS run in a docker container. Terraform will not be installed on the system.
+    """
+
+    name: str = "terraform_fmt"
+    parallel_run: bool = False
+    weight = 100
+    language = Language.TERRAFORM
+
+    def run(self):
+        """Will run the terraform fmt linter in a docker container."""
+        args = [
+            "docker",
+            "run",
+            "--rm",
+            "--volume",
+            f"{consts.EXECUTED_FROM}:/opt",
+            "--workdir",
+            "/opt",
+            "hashicorp/terraform",
+            "fmt",
+            *self._args,
+        ]
+        return _run(self.name, args)
+
+    def check(self):
+        """Will run the terraform fmt check linter in a docker container."""
+        args = [
+            "docker",
+            "run",
+            "--rm",
+            "--volume",
+            f"{consts.EXECUTED_FROM}:/opt",
+            "--workdir",
+            "/opt",
+            "hashicorp/terraform",
+            "fmt",
+            "-check",
+            *self._args,
+        ]
+        return _run(self.name, args)
+
+
+class TerrascanDocker(Linter):
+    """
+    Terrascan linter.
+
+    Only for Dockerfiles.
+
+    Detect compliance and security violations across Infrastructure as Code
+    https://runterrascan.io/docs/
+
+    NOTE: This will ALWAYS run in a docker container. Terrascan will not be installed on the system.
+    """
+
+    name: str = "terrascan_docker"
+    parallel_run: bool = True
+    language = Language.TERRAFORM
+
+    def run(self):
+        """Will run the terrascan linter for dockerfiles in a docker container."""
+        args = [
+            "docker",
+            "run",
+            "--rm",
+            "--volume",
+            f"{consts.EXECUTED_FROM}:/iac",
+            "--workdir",
+            "/iac",
+            "tenable/terrascan",
+            "scan",
+            "-i",
+            "docker",
+            *self._args,
+        ]
+        return _run(self.name, args)
+
+    def check(self):
+        """Will run the terrascan linter for dockerfiles in a docker container."""
+        return self.run()
+
+
 DEFAULT_PYTHON = [
     ISort(),
     Black(args=[f"--line-length={MAX_LINE_LENGTH}"]),
@@ -525,7 +616,12 @@ DEFAULT_PYTHON = [
 ]
 
 DEFAULT_TERRAFORM = [
+    TerraformFmt(args=["./terraform"]),
     CheckOV(),
-    Terrascan(args=["-d", "./terraform"]),
+    TerrascanTerraform(args=["-d", "./terraform"]),
     TFSec(),
+]
+
+DEFAULT_DOCKER = [
+    TerrascanDocker(),
 ]
