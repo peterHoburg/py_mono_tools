@@ -33,13 +33,13 @@ plugins:
   - search
 #  - offline
   - minify:
-    minify_html: true
+      minify_html: true
 
 markdown_extensions:
   - attr_list
   - mkdocs-click
   - toc:
-    permalink: true
+      permalink: true
 
 watch:
   - docs
