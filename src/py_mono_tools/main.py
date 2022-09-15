@@ -270,12 +270,16 @@ def test():
 
 
 @cli.command()
-def deploy():
+@click.option("--plan", is_flag=True, default=False)
+def deploy(plan: bool):
     """Run the specified build and deploy in the specific CONF file."""
     deployers = consts.CONF.DEPLOY
     for deployer in deployers:
         logger.info("Deploying: %s", deployer.name)
-        logs, return_code = deployer.plan()
+        if plan is True:
+            logs, return_code = deployer.plan()
+        else:
+            logs, return_code = deployer.run()
         logger.info("Deploy result: %s %s", deployer.name, return_code)
         logger.info(logs)
 
