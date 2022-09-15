@@ -1,4 +1,4 @@
-site_name: Py Mono Repo
+site_name: Py Mono Tools
 site_url: https://peterhoburg.github.io/py_mono_tools
 repo_url: https://github.com/peterHoburg/py_mono_tools
 
@@ -33,13 +33,13 @@ plugins:
   - search
 #  - offline
   - minify:
-      minify_html: true
+    minify_html: true
 
 markdown_extensions:
   - attr_list
   - mkdocs-click
   - toc:
-        permalink: true
+    permalink: true
 
 watch:
   - docs

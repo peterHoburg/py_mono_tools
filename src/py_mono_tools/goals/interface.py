@@ -62,3 +62,34 @@ class Tester(abc.ABC):
     def run(self):
         """Will run the tester."""
         raise NotImplementedError
+
+
+class Deployers(abc.ABC):
+    """The interface that all deployers will implement."""
+
+    name: str
+
+    def __init__(self, args: t.Optional[t.List[str]] = None, pyproject_loc: t.Optional[str] = None):
+        """Will initialize the deployer.
+
+        Args are passed through to the deployer.
+        """
+        if args is None:
+            args = []
+        self._args = args
+        self._pyproject_loc = pyproject_loc
+
+    @abc.abstractmethod
+    def plan(self):
+        """Will run the deployer in plan mode."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def build(self):
+        """Will build anything the deployer needs."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def run(self):
+        """Will run the deployer."""
+        raise NotImplementedError

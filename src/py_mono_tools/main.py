@@ -269,6 +269,17 @@ def test():
         logger.info(logs)
 
 
+@cli.command()
+def deploy():
+    """Run the specified build and deploy in the specific CONF file."""
+    deployers = consts.CONF.DEPLOY
+    for deployer in deployers:
+        logger.info("Deploying: %s", deployer.name)
+        logs, return_code = deployer.plan()
+        logger.info("Deploy result: %s %s", deployer.name, return_code)
+        logger.info(logs)
+
+
 # @cli.command()
 # @click.option("--force-rebuild", is_flag=True, default=False)
 # @click.option("--modules", multiple=True, type=t.List[str], default=["all"])
@@ -282,10 +293,6 @@ def test():
 #     consts.CURRENT_BACKEND.build(force_rebuild=force_rebuild)
 #
 #
-# @cli.command()
-# def deploy():
-#     """Run the specified build and deploy in the specific CONF file."""
-#     raise NotImplementedError
 #
 #
 # @cli.command()

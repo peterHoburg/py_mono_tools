@@ -4,6 +4,7 @@ import pathlib
 
 from py_mono_tools.goals.linters import DEFAULT_PYTHON
 from py_mono_tools.goals.tester import PytestTester
+from py_mono_tools.goals.deployers import PoetryBuilder
 
 
 NAME = "py_mono_tools"
@@ -13,4 +14,4 @@ LINT = [
     *DEFAULT_PYTHON,
 ]
 TEST = [PytestTester(test_dir="../../test/py_mono_tools")]
-DEPLOY = []
+DEPLOY = [PoetryBuilder(pyproject_loc="../../pyproject.toml")]

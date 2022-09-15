@@ -5,9 +5,7 @@ import pathlib
 from py_mono_tools.goals.linters import DEFAULT_TERRAFORM
 
 
-path = pathlib.Path(__file__).parent
-
-NAME = "test_terraform"
+NAME = "example_terraform"
 BACKEND = "system"
 
 LINT = [
