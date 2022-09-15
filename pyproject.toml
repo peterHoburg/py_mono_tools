@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "py_mono_tools"
-version = "0.0.19"
+version = "0.0.20"
 description = "A CLI designed to make it easier to work in a python mono repo"
 license = "GPL-3.0-or-later"
 authors = ["Peter Hoburg <peterHoburg@users.noreply.github.com>"]
