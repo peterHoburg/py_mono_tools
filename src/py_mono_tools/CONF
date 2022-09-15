@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 import pathlib
 
+from py_mono_tools.goals.deployers import PoetryBuilder
 from py_mono_tools.goals.linters import DEFAULT_PYTHON
 from py_mono_tools.goals.tester import PytestTester
-from py_mono_tools.goals.deployers import PoetryBuilder
 
 
 NAME = "py_mono_tools"
