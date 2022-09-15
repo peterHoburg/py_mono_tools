@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "docker-module"
+version = "0.1.0"
+description = ""
+authors = ["Peter <peterHoburg@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "docker_module", from="src"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+py-mono-tools = {extras = ["linters-python"], version = "^0.0.23"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

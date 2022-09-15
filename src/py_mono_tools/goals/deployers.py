@@ -6,9 +6,9 @@ from py_mono_tools.goals.interface import Deployers, Language
 
 
 class PoetryBuilder(Deployers):
-    """Class to interact with terraform."""
+    """Class to interact with poetry."""
 
-    name: str = "terraform"
+    name: str = "poetry"
     language = Language.PYTHON
 
     def _run_poetry(self, commands: list):

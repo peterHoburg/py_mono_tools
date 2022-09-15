@@ -1,1 +1,0 @@
-py-mono-tools[linters-python]>=0.0.13
