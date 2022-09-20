@@ -19,7 +19,7 @@ class Consts:
     CURRENT_BACKEND: t.Optional["Backend"] = None  # pylint: disable=invalid-name
     BACKENDS: t.Optional[t.Dict[str, t.Type["Backend"]]] = None  # pylint: disable=invalid-name
     CONF = None  # pylint: disable=invalid-name
-    ALL_LINTERS: t.List[Linter] = []
+    ALL_LINTERS: t.List[Linter] = []  # pylint: disable=invalid-name
     ALL_LINTER_NAMES: t.List[str] = []
 
 

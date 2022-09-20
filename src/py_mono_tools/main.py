@@ -273,7 +273,7 @@ def test():
 @click.option("--plan", is_flag=True, default=False)
 def deploy(plan: bool):
     """Run the specified build and deploy in the specific CONF file."""
-    deployers = consts.CONF.DEPLOY
+    deployers = consts.CONF.DEPLOY  # type: ignore
     for deployer in deployers:
         logger.info("Deploying: %s", deployer.name)
         if plan is True:
@@ -282,6 +282,12 @@ def deploy(plan: bool):
             logs, return_code = deployer.run()
         logger.info("Deploy result: %s %s", deployer.name, return_code)
         logger.info(logs)
+
+
+@cli.command()
+def interactive():
+    """Drop into an interactive session in your specified backend."""
+    consts.CURRENT_BACKEND.interactive()
 
 
 # @cli.command()
@@ -329,10 +335,6 @@ def deploy(plan: bool):
 #     raise NotImplementedError
 #
 #
-# @cli.command()
-# def interactive():
-#     """Drop into an interactive session in your specified backend."""
-#     raise NotImplementedError
 #
 #
 # @cli.command()

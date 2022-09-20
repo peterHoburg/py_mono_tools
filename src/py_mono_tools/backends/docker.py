@@ -59,9 +59,22 @@ class Docker(Backend):
             stdout_data, stderr_data = process.communicate()
         return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode("utf-8")
 
-    def interactive(self):
-        """Not implemented for the docker backend."""
-        raise NotImplementedError
+    def interactive(self, workdir: str = "/opt"):
+        """Will drop user into interactive docker session."""
+        self.build()
+        commands = [
+            "docker",
+            "run",
+            "--rm",
+            "-w",
+            workdir,
+            "-v",
+            f"{consts.EXECUTED_FROM}:{workdir}",
+            "-it",
+            "pmt_docker_backend",
+            "/bin/bash",
+        ]
+        os.execvp(file=commands[0], args=commands)  # nosec B606
 
     def shutdown(self):
         """Will shut down any running containers."""

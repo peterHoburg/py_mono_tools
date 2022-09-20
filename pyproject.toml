@@ -39,8 +39,10 @@ pmt = "py_mono_tools.main:cli"
 [tool.poetry.dependencies]
 python = "^3.8"
 
+# CLI
 click = "^8"
 
+# linters-python
 bandit = "^1.7.4"
 black = "^22.8.0"
 flake8 = "^5.0.4"
@@ -49,6 +51,8 @@ mypy = "^0.971"
 pydocstringformatter = "^0.7.2"
 pydocstyle = {extras = ["toml"], version = "^6.1.1"}
 pylint = "^2.15.2"
+
+# testers-python
 pytest = "^7.1.3"
 
 
@@ -62,11 +66,8 @@ mkdocs-click = "^0.8.0"
 
 [tool.poetry.extras]
 linters-python = ["bandit", "black", "flake8", "isort", "mypy", "pydocstringformatter", "pydocstyle[toml]", "pylint"]
+testers-python = ["pytest"]
 
-
-
-[tool.poetry.group.testers_python.dependencies]
-pytest = "^7.1.3"
 
 [tool.isort]
 profile = "black"
