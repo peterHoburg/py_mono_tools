@@ -4,7 +4,7 @@ import os
 import pathlib
 import typing as t
 
-from py_mono_tools.goals.interface import Linter
+from py_mono_tools.goals.interface import Deployer, Linter, Tester
 
 
 if t.TYPE_CHECKING:
@@ -19,8 +19,18 @@ class Consts:
     CURRENT_BACKEND: t.Optional["Backend"] = None  # pylint: disable=invalid-name
     BACKENDS: t.Optional[t.Dict[str, t.Type["Backend"]]] = None  # pylint: disable=invalid-name
     CONF = None  # pylint: disable=invalid-name
+
+    ALL_DEPLOYERS: t.List[Deployer] = []  # pylint: disable=invalid-name
+    ALL_DEPLOYER_NAMES: t.List[str] = []  # pylint: disable=invalid-name
+
     ALL_LINTERS: t.List[Linter] = []  # pylint: disable=invalid-name
-    ALL_LINTER_NAMES: t.List[str] = []
+    ALL_LINTER_NAMES: t.List[str] = []  # pylint: disable=invalid-name
+
+    ALL_TESTERS: t.List[Tester] = []  # pylint: disable=invalid-name
+    ALL_TESTER_NAMES: t.List[str] = []  # pylint: disable=invalid-name
+
+    ALL_BACKENDS: t.List["Backend"] = []  # pylint: disable=invalid-name
+    ALL_BACKEND_NAMES: t.List[str] = []  # pylint: disable=invalid-name
 
 
 consts = Consts()

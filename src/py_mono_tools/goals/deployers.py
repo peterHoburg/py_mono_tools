@@ -3,10 +3,10 @@ import pathlib
 import subprocess  # nosec B404
 
 from py_mono_tools.config import consts, logger
-from py_mono_tools.goals.interface import Deployers, Language
+from py_mono_tools.goals.interface import Deployer, Language
 
 
-class PoetryBuilder(Deployers):
+class PoetryBuilder(Deployer):
     """Class to interact with poetry."""
 
     name: str = "poetry"

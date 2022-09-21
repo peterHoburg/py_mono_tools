@@ -64,7 +64,7 @@ class Tester(abc.ABC):
         raise NotImplementedError
 
 
-class Deployers(abc.ABC):
+class Deployer(abc.ABC):
     """The interface that all deployers will implement."""
 
     name: str

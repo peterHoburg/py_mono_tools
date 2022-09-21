@@ -15,31 +15,40 @@ import click
 
 from py_mono_tools.backends import Docker, System
 from py_mono_tools.config import consts, logger
-from py_mono_tools.goals import linters as linters_mod
-from py_mono_tools.goals.interface import Language, Linter
+from py_mono_tools.goals import deployers as deployers_mod, linters as linters_mod, testers as testers_mod
+from py_mono_tools.goals.interface import Deployer, Language, Linter, Tester
 
 
 logger.info("Starting main")
 
 
-def _find_linters():
-    logger.debug("Finding linters")
-    linter_classes = inspect.getmembers(linters_mod, inspect.isclass)
-    linter_instances = [
-        linter_class[1]()
-        for linter_class in linter_classes
-        if issubclass(linter_class[1], Linter) and linter_class[1] != Linter
+def _find_goals():
+    goals = [
+        (linters_mod, Linter, "linters", consts.ALL_LINTERS, consts.ALL_LINTER_NAMES),
+        (deployers_mod, Deployer, "deployers", consts.ALL_DEPLOYERS, consts.ALL_DEPLOYER_NAMES),
+        (testers_mod, Tester, "testers", consts.ALL_TESTERS, consts.ALL_TESTER_NAMES),
     ]
-    # pylint: disable=invalid-name
-    consts.ALL_LINTERS = linter_instances
 
-    for linter in linter_instances:
-        consts.ALL_LINTER_NAMES.append(linter.name)
+    for goal in goals:
+        goal_mod, goal_abc, goal_name, consts_goal_instances, consts_goal_names = goal
+        logger.debug("Finding %s", goal_name)
+        goal_classes = inspect.getmembers(goal_mod, inspect.isclass)
+        goal_instances = [
+            goal_class[1]()
+            for goal_class in goal_classes
+            if issubclass(goal_class[1], goal_abc) and goal_class[1] != goal_abc
+        ]
+        # pylint: disable=invalid-name
+        consts_goal_instances.extend(goal_instances)
 
-    logger.debug("Found linters: %s", consts.ALL_LINTER_NAMES)
+        for goal_instance in goal_instances:
+            consts_goal_names.append(goal_instance.name)
+
+    consts.ALL_BACKENDS = [Docker, System]
+    consts.ALL_BACKEND_NAMES = [Docker.name, System.name]
 
 
-_find_linters()
+_find_goals()
 
 
 def _load_conf(conf_path: str) -> ModuleType:
@@ -161,19 +170,21 @@ def cli(backend, absolute_path, relative_path, name, verbose):
     elif name is not None:
         _set_path_from_conf_name(name)
 
-    mod = _load_conf(consts.EXECUTED_FROM)
+    try:
+        mod = _load_conf(consts.EXECUTED_FROM)
+        # pylint: disable=invalid-name
+        consts.CONF = mod
+        if backend is None:
+            try:
+                backend = consts.CONF.BACKEND
+            except AttributeError:
+                backend = "system"
 
-    # pylint: disable=invalid-name
-    consts.CONF = mod
-    if backend is None:
-        try:
-            backend = consts.CONF.BACKEND
-        except AttributeError:
-            backend = "system"
+        logger.info("Using backed: %s", backend)
 
-    logger.info("Using backed: %s", backend)
-
-    _init_backend(backend)
+        _init_backend(backend)
+    except FileNotFoundError:
+        logger.error("No CONF file found in %s", consts.EXECUTED_FROM)
 
 
 @cli.command()
@@ -288,6 +299,38 @@ def deploy(plan: bool):
 def interactive():
     """Drop into an interactive session in your specified backend."""
     consts.CURRENT_BACKEND.interactive()
+
+
+@cli.command(name="list")
+def list_():
+    """List all CONF file names and relative paths."""
+    conf_names = []
+    for rel_path, _, filenames in os.walk("."):
+        for filename in filenames:
+            if filename == "CONF":
+                path = pathlib.Path(rel_path).resolve()
+                mod = _load_conf(str(path))
+                conf_names.append(f"{mod.NAME} -- {rel_path}")
+
+    print("Backends:")
+    for backend in consts.ALL_BACKEND_NAMES:
+        print("    " + backend)
+
+    print("CONF file names:")
+    for conf_name in conf_names:
+        print("    " + conf_name)
+
+    print("Deployers:")
+    for deployer in consts.ALL_DEPLOYER_NAMES:
+        print("    " + deployer)
+
+    print("Linters:")
+    for linter in consts.ALL_LINTER_NAMES:
+        print("    " + linter)
+
+    print("Testers:")
+    for tester in consts.ALL_TESTER_NAMES:
+        print("    " + tester)
 
 
 # @cli.command()
