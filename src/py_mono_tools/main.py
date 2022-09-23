@@ -288,9 +288,9 @@ def deploy(plan: bool):
     for deployer in deployers:
         logger.info("Deploying: %s", deployer.name)
         if plan is True:
-            logs, return_code = deployer.plan()
+            return_code, logs = deployer.plan()
         else:
-            logs, return_code = deployer.run()
+            return_code, logs = deployer.run()
         logger.info("Deploy result: %s %s", deployer.name, return_code)
         logger.info(logs)
 

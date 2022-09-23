@@ -543,6 +543,7 @@ class TerraformFmt(Linter):
             "/opt",
             "hashicorp/terraform",
             "fmt",
+            "-recursive",
             *self._args,
         ]
         return _run(self.name, args)
@@ -559,6 +560,7 @@ class TerraformFmt(Linter):
             "/opt",
             "hashicorp/terraform",
             "fmt",
+            "-recursive",
             "-check",
             *self._args,
         ]
