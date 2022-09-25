@@ -32,6 +32,11 @@ def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
     return logs, return_code
 
 
+def _pull_latest_docker(image_name: str):
+    logger.info("Pulling latest docker image: %s", image_name)
+    consts.BACKENDS["system"]().run(["docker", "pull", image_name])  # type: ignore
+
+
 class Bandit(Linter):
     """
     Bandit linter.
@@ -387,6 +392,7 @@ class CheckOV(Linter):
 
     def run(self):
         """Will run the checkov linter in a docker container."""
+        image_name = "bridgecrew/checkov"
         args = [
             "docker",
             "run",
@@ -396,11 +402,12 @@ class CheckOV(Linter):
             f"{consts.EXECUTED_FROM}:/tf",
             "--workdir",
             "/tf",
-            "bridgecrew/checkov",
+            image_name,
             "--directory",
             "/tf",
             *self._args,
         ]
+        _pull_latest_docker(image_name)
         return _run(self.name, args)
 
     def check(self):
@@ -426,6 +433,7 @@ class TerrascanTerraform(Linter):
 
     def run(self):
         """Will run the terrascan linter for terraform in a docker container."""
+        image_name = "tenable/terrascan"
         args = [
             "docker",
             "run",
@@ -434,12 +442,13 @@ class TerrascanTerraform(Linter):
             f"{consts.EXECUTED_FROM}:/iac",
             "--workdir",
             "/iac",
-            "tenable/terrascan",
+            image_name,
             "scan",
             "-i",
             "terraform",
             *self._args,
         ]
+        _pull_latest_docker(image_name)
         return _run(self.name, args)
 
     def check(self):
@@ -466,6 +475,7 @@ class TFLint(Linter):
 
     def run(self):
         """Will run the tflint linter in a docker container."""
+        image_name = "ghcr.io/terraform-linters/tflint"
         args = [
             "docker",
             "run",
@@ -473,9 +483,10 @@ class TFLint(Linter):
             "-v",
             f"{consts.EXECUTED_FROM}:/data",
             "-t",
-            "ghcr.io/terraform-linters/tflint",
+            image_name,
             *self._args,
         ]
+        _pull_latest_docker(image_name)
         return _run(self.name, args)
 
     def check(self):
@@ -499,6 +510,7 @@ class TFSec(Linter):
 
     def run(self):
         """Will run the tfsec linter in a docker container."""
+        image_name = "aquasec/tfsec"
         args = [
             "docker",
             "run",
@@ -506,10 +518,11 @@ class TFSec(Linter):
             "-it",
             "-v",
             f"{consts.EXECUTED_FROM}:/src",
-            "aquasec/tfsec",
+            image_name,
             "/src",
             *self._args,
         ]
+        _pull_latest_docker(image_name)
         return _run(self.name, args)
 
     def check(self):
@@ -533,6 +546,7 @@ class TerraformFmt(Linter):
 
     def run(self):
         """Will run the terraform fmt linter in a docker container."""
+        image_name = "hashicorp/terraform"
         args = [
             "docker",
             "run",
@@ -541,30 +555,18 @@ class TerraformFmt(Linter):
             f"{consts.EXECUTED_FROM}:/opt",
             "--workdir",
             "/opt",
-            "hashicorp/terraform",
+            image_name,
             "fmt",
             "-recursive",
             *self._args,
         ]
+        _pull_latest_docker(image_name)
         return _run(self.name, args)
 
     def check(self):
         """Will run the terraform fmt check linter in a docker container."""
-        args = [
-            "docker",
-            "run",
-            "--rm",
-            "--volume",
-            f"{consts.EXECUTED_FROM}:/opt",
-            "--workdir",
-            "/opt",
-            "hashicorp/terraform",
-            "fmt",
-            "-recursive",
-            "-check",
-            *self._args,
-        ]
-        return _run(self.name, args)
+        self._args = ["-check"] + self._args
+        return self.run()
 
 
 class TerrascanDocker(Linter):
@@ -585,6 +587,7 @@ class TerrascanDocker(Linter):
 
     def run(self):
         """Will run the terrascan linter for dockerfiles in a docker container."""
+        image_name = "tenable/terrascan"
         args = [
             "docker",
             "run",
@@ -593,12 +596,13 @@ class TerrascanDocker(Linter):
             f"{consts.EXECUTED_FROM}:/iac",
             "--workdir",
             "/iac",
-            "tenable/terrascan",
+            image_name,
             "scan",
             "-i",
             "docker",
             *self._args,
         ]
+        _pull_latest_docker(image_name)
         return _run(self.name, args)
 
     def check(self):
@@ -618,7 +622,7 @@ DEFAULT_PYTHON = [
 ]
 
 DEFAULT_TERRAFORM = [
-    TerraformFmt(args=["./terraform"]),
+    TerraformFmt(),
     CheckOV(),
     TerrascanTerraform(args=["-d", "./terraform"]),
     TFSec(),

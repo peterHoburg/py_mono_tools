@@ -378,8 +378,6 @@ def list_():
 #     raise NotImplementedError
 #
 #
-#
-#
 # @cli.command()
 # def setup():
 #     """Not implemented."""
