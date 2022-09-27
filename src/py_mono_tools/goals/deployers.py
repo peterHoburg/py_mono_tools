@@ -9,7 +9,7 @@ from py_mono_tools.config import consts, logger
 from py_mono_tools.goals.interface import Deployer, Language
 
 
-class PoetryBuilder(Deployer):
+class PoetryDeployer(Deployer):
     """Class to interact with poetry."""
 
     name: str = "poetry"
@@ -113,7 +113,7 @@ class TerraformDeployer(Deployer):
 
         return env
 
-    def plan(self):
+    def _run(self, build_or_plan: str):
         commands = [
             "docker",
             "run",
@@ -131,7 +131,12 @@ class TerraformDeployer(Deployer):
         if self._terraform_dir is not None:
             commands.append(f"-chdir={self._terraform_dir}")
 
-        commands.append("plan")
+        commands.append(build_or_plan)
+
+        if "-auto-approve" in self._args and build_or_plan == "plan":
+            logger.warning("auto approve is set, but this is a plan, ignoring")
+            self._args.remove("-auto-approve")
+
         commands.extend(self._args)
 
         logger.info("running command: %s", commands)
@@ -147,8 +152,11 @@ class TerraformDeployer(Deployer):
 
         return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode("utf-8")
 
+    def plan(self):
+        return self._run("plan")
+
     def build(self):
-        pass
+        return self.plan()
 
     def run(self):
-        return self.plan()
+        return self._run("apply")
