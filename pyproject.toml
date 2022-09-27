@@ -66,17 +66,28 @@ mkdocs-minify-plugin = "^0"
 mkdocs-click = "^0"
 
 [tool.poetry.extras]
-python = [
-    "bandit", "black", "flake8", "isort", "mypy", "pydocstringformatter", "pydocstyle[toml]", "pylint", "pytest", "pip-audit"
-]
 
 python-linters = [
-    "bandit", "black", "flake8", "isort", "mypy", "pydocstringformatter", "pydocstyle[toml]", "pylint", "pip-audit"
+    "bandit", "black", "flake8", "isort", "mypy", "pydocstringformatter", "pydocstyle[toml]", "pylint", "pip-audit",
 ]
 python-testers = ["pytest"]
 
+python = [
+    # python-linters
+    "bandit", "black", "flake8", "isort", "mypy", "pydocstringformatter", "pydocstyle[toml]", "pylint", "pip-audit",
 
-all = ["bandit", "black", "flake8", "isort", "mypy", "pydocstringformatter", "pydocstyle[toml]", "pylint", "pytest"]
+    # python-testers
+    "pytest"
+]
+
+
+all = [
+    # python-linters
+    "bandit", "black", "flake8", "isort", "mypy", "pydocstringformatter", "pydocstyle[toml]", "pylint", "pip-audit",
+
+    # python-testers
+    "pytest"
+]
 
 
 [tool.isort]
