@@ -69,7 +69,7 @@ class Deployer(abc.ABC):
 
     name: str
 
-    def __init__(self, args: t.Optional[t.List[str]] = None, pyproject_loc: t.Optional[str] = None):
+    def __init__(self, args: t.Optional[t.List[str]] = None):
         """Will initialize the deployer.
 
         Args are passed through to the deployer.
@@ -77,19 +77,18 @@ class Deployer(abc.ABC):
         if args is None:
             args = []
         self._args = args
-        self._pyproject_loc = pyproject_loc
 
     @abc.abstractmethod
-    def plan(self):
+    def plan(self) -> t.Tuple[int, str]:
         """Will run the deployer in plan mode."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def build(self):
+    def build(self) -> t.Tuple[int, str]:
         """Will build anything the deployer needs."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def run(self):
+    def run(self) -> t.Tuple[int, str]:
         """Will run the deployer."""
         raise NotImplementedError
