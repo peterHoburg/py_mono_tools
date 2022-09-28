@@ -42,7 +42,7 @@ class Linter(abc.ABC):
         raise NotImplementedError
 
 
-class Tester(abc.ABC):
+class Tester(abc.ABC):  # pylint: disable=too-few-public-methods
     """The interface that all Testers will implement."""
 
     name: str

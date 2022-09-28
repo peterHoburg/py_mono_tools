@@ -9,9 +9,10 @@ from py_mono_tools.goals.testers import PytestTester
 
 NAME = "py_mono_tools"
 BACKEND = "system"
+REQUIREMENTS_RELATIVE_PATH = "../../pyproject.toml"
 
 LINT = [
     *DEFAULT_PYTHON,
 ]
 TEST = [PytestTester(test_dir="../../test/py_mono_tools")]
-DEPLOY = [PoetryDeployer(pyproject_loc="../../pyproject.toml")]
+DEPLOY = [PoetryDeployer(pyproject_loc=REQUIREMENTS_RELATIVE_PATH)]

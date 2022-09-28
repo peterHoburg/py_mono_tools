@@ -28,7 +28,7 @@ def _run(tester: str, args: t.List[str], workdir=None) -> t.Tuple[str, int]:
     return logs, return_code
 
 
-class PytestTester(Tester):
+class PytestTester(Tester):  # pylint: disable=too-few-public-methods
     """Pytest tester."""
 
     name = "pytest"

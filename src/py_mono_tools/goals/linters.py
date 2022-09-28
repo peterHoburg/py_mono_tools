@@ -88,6 +88,7 @@ class Black(Linter):
             consts.EXECUTED_FROM,
             *self._args,
         ]
+
         return _run(self.name, args)
 
     def check(self):
@@ -376,6 +377,40 @@ class Pylint(Linter):
         return self.run()
 
 
+class PipAudit(Linter):
+    """
+    PipAudit linter.
+
+    A tool to check for vulnerable Python packages.
+    https://pypi.org/project/pip-audit/
+    """
+
+    name: str = "pip-audit"
+    parallel_run: bool = True
+    language = Language.PYTHON
+
+    def run(self):
+        """Will run the pip-audit linter."""
+        base_args = [
+            "pip-audit",
+            "-S",
+            "-s",
+        ]
+        args = [*base_args, "osv", *self._args]
+        logs, return_code = _run(self.name, args)
+
+        if return_code == 0:
+            args = [*base_args, "pypi", *self._args]
+            logs_pypi, return_code = _run(self.name, args)
+            logs += logs_pypi
+
+        return logs, return_code
+
+    def check(self):
+        """Will run the pip-audit linter."""
+        return self.run()
+
+
 class CheckOV(Linter):
     """
     CheckOV linter.
@@ -619,6 +654,7 @@ DEFAULT_PYTHON = [
     Mypy(),
     Pydocstyle(),
     Pylint(args=[f"--max-line-length={MAX_LINE_LENGTH}"]),
+    PipAudit(),
 ]
 
 DEFAULT_TERRAFORM = [

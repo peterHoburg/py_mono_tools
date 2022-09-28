@@ -78,6 +78,7 @@ class PoetryDeployer(Deployer):
 
 class TerraformDeployer(Deployer):
     """Class that uses the terraform CLI (inside a docker container) to deploy the infrastructure."""
+
     name: str = "terraform"
     language = Language.TERRAFORM
 
@@ -88,7 +89,6 @@ class TerraformDeployer(Deployer):
         terraform_dir: t.Optional[str] = None,
     ):
         """Will initialize the terraform deployer."""
-
         super().__init__(args)
         self._terraform_version = terraform_version
         self._terraform_dir = terraform_dir
@@ -99,10 +99,10 @@ class TerraformDeployer(Deployer):
 
         if token is None:
             try:
-                with open(f"{pathlib.Path.home()}/.terraform.d/credentials.tfrc.json", "r") as file:
+                with open(f"{pathlib.Path.home()}/.terraform.d/credentials.tfrc.json", "r", encoding="UTF-8") as file:
                     cred_file = json.load(file)
                     token = cred_file["credentials"]["app.terraform.io"]["token"]
-            except Exception:
+            except (FileNotFoundError, json.decoder.JSONDecodeError, KeyError):
                 logger.exception("failed to get token from credentials.tfrc.json")
 
         env = {
@@ -127,7 +127,9 @@ class TerraformDeployer(Deployer):
         for key, value in env.items():
             commands.extend(["-e", f"{key}={value}"])
 
-        commands.append(f"hashicorp/terraform:{self._terraform_version}", )
+        commands.append(
+            f"hashicorp/terraform:{self._terraform_version}",
+        )
         if self._terraform_dir is not None:
             commands.append(f"-chdir={self._terraform_dir}")
 
@@ -153,10 +155,13 @@ class TerraformDeployer(Deployer):
         return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode("utf-8")
 
     def plan(self):
+        """Will run terraform plan."""
         return self._run("plan")
 
     def build(self):
+        """Will run terraform plan."""
         return self.plan()
 
     def run(self):
+        """Will run terraform apply."""
         return self._run("apply")
