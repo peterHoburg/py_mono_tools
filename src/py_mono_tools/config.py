@@ -11,26 +11,26 @@ if t.TYPE_CHECKING:
     from py_mono_tools.backends.interface import Backend
 
 
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods, invalid-name
 class Consts:
     """Used to store some "consts" that will be set at CLI runtime, then used in other modules."""
 
-    EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())  # pylint: disable=invalid-name
-    CURRENT_BACKEND: t.Optional["Backend"] = None  # pylint: disable=invalid-name
-    BACKENDS: t.Optional[t.Dict[str, t.Type["Backend"]]] = None  # pylint: disable=invalid-name
-    CONF = None  # pylint: disable=invalid-name
+    EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
+    CURRENT_BACKEND: t.Optional["Backend"] = None
+    BACKENDS: t.Optional[t.Dict[str, t.Type["Backend"]]] = None
+    CONF = None
 
-    ALL_DEPLOYERS: t.List[Deployer] = []  # pylint: disable=invalid-name
-    ALL_DEPLOYER_NAMES: t.List[str] = []  # pylint: disable=invalid-name
+    ALL_DEPLOYERS: t.List[Deployer] = []
+    ALL_DEPLOYER_NAMES: t.List[str] = []
 
-    ALL_LINTERS: t.List[Linter] = []  # pylint: disable=invalid-name
-    ALL_LINTER_NAMES: t.List[str] = []  # pylint: disable=invalid-name
+    ALL_LINTERS: t.List[Linter] = []
+    ALL_LINTER_NAMES: t.List[str] = []
 
-    ALL_TESTERS: t.List[Tester] = []  # pylint: disable=invalid-name
-    ALL_TESTER_NAMES: t.List[str] = []  # pylint: disable=invalid-name
+    ALL_TESTERS: t.List[Tester] = []
+    ALL_TESTER_NAMES: t.List[str] = []
 
-    ALL_BACKENDS: t.List["Backend"] = []  # pylint: disable=invalid-name
-    ALL_BACKEND_NAMES: t.List[str] = []  # pylint: disable=invalid-name
+    ALL_BACKENDS: t.List["Backend"] = []
+    ALL_BACKEND_NAMES: t.List[str] = []
 
 
 consts = Consts()

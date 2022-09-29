@@ -38,7 +38,6 @@ def _find_goals():
             for goal_class in goal_classes
             if issubclass(goal_class[1], goal_abc) and goal_class[1] != goal_abc
         ]
-        # pylint: disable=invalid-name
         consts_goal_instances.extend(goal_instances)
 
         for goal_instance in goal_instances:
@@ -73,16 +72,14 @@ def _init_logger(verbose: bool):
 def _set_absolute_path(absolute_path: str):
     logger.info("Overwriting execution root path: %s", absolute_path)
 
-    # pylint: disable=invalid-name
     consts.EXECUTED_FROM = pathlib.Path(absolute_path).resolve()
 
-    os.chdir(consts.EXECUTED_FROM.resolve())  # pylint: disable=invalid-name
+    os.chdir(consts.EXECUTED_FROM.resolve())
 
 
 def _set_relative_path(relative_path: str):
     logger.info("Overwriting execution root path: %s", relative_path)
 
-    # pylint: disable=invalid-name
     consts.EXECUTED_FROM = consts.EXECUTED_FROM.joinpath(pathlib.Path(relative_path).resolve())
     os.chdir(consts.EXECUTED_FROM)
 
@@ -105,7 +102,6 @@ def _set_path_from_conf_name(name: str):
 def _init_backend(_build_system: str):
     logger.debug("Initializing build system: %s", _build_system)
 
-    # pylint: disable=invalid-name
     consts.BACKENDS = {
         Docker.name: Docker,
         System.name: System,
@@ -172,7 +168,6 @@ def cli(backend, absolute_path, relative_path, name, verbose):
 
     try:
         mod = _load_conf(consts.EXECUTED_FROM)
-        # pylint: disable=invalid-name
         consts.CONF = mod
         if backend is None:
             try:

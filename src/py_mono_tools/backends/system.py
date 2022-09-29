@@ -4,7 +4,7 @@ import subprocess  # nosec B404
 import typing as t
 
 from py_mono_tools.backends.interface import Backend
-from py_mono_tools.config import consts
+from py_mono_tools.config import consts, logger
 
 
 class System(Backend):
@@ -22,13 +22,14 @@ class System(Backend):
         """Will run a command on the local system."""
         if workdir is not None:
             workdir = str(pathlib.Path(workdir).absolute())
+
         with subprocess.Popen(  # nosec B603
             args,
             cwd=workdir or consts.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ) as process:
-
+            logger.debug("running system command: %s", args)
             stdout_data, stderr_data = process.communicate()
         return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode("utf-8")
 

@@ -1,7 +1,5 @@
 #!/user/bin/env python
 # -*- coding: utf-8 -*-
-import pathlib
-
 from py_mono_tools.goals.deployers import PoetryDeployer
 from py_mono_tools.goals.linters import DEFAULT_PYTHON
 from py_mono_tools.goals.testers import PytestTester
