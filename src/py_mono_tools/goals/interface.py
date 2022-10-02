@@ -8,6 +8,7 @@ class Language(Enum):
     """The languages that the linters can check."""
 
     TERRAFORM = "terraform"
+    DOCKER = "docker"
     PYTHON = "python"
 
 

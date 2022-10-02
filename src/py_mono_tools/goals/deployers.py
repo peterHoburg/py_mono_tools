@@ -165,3 +165,20 @@ class TerraformDeployer(Deployer):
     def run(self):
         """Will run terraform apply."""
         return self._run("apply")
+
+
+class ECRDeployer(Deployer):
+    """Class that uses the docker CLI to build and push the docker images."""
+
+    name: str = "ecr"
+    language = Language.DOCKER
+
+    def _aws_login(self):
+        """aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 302402310055.dkr.ecr.us-east-1.amazonaws.com"""
+        pass
+
+
+    def run(self):
+        pass
+
+

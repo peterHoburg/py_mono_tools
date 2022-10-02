@@ -618,7 +618,7 @@ class TerrascanDocker(Linter):
 
     name: str = "terrascan_docker"
     parallel_run: bool = True
-    language = Language.TERRAFORM
+    language = Language.DOCKER
 
     def run(self):
         """Will run the terrascan linter for dockerfiles in a docker container."""
