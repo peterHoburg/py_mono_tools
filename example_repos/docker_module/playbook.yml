@@ -30,5 +30,5 @@
     - name: Install project using Poetry
       become: yes
       become_user: "{{ main_user }}"
-      ansible.builtin.command: poetry install
+      ansible.builtin.command: /home/{{ main_user }}/.local/bin/poetry install
 
