@@ -18,7 +18,13 @@ def test_isort():
 
 def test_mypy():
     cwd = example_repo_path("docker_module")
-    returncode, result = vagrant(commands="poetry run pmt lint --check -s mypy", cwd=cwd.absolute())
+    returncode, result = vagrant(commands="poetry run pmt lint -s mypy", cwd=cwd.absolute())
+    assert b"main.py:6: \x1b[1m\x1b[31merror:\x1b(B\x1b[m Missing return statement" in result
+
+
+def test_mypy_specify_conf_name():
+    cwd = example_repo_path("docker_module")
+    returncode, result = vagrant(commands="poetry run pmt -n example_docker_module lint -s mypy", cwd=cwd.absolute())
     assert b"main.py:6: \x1b[1m\x1b[31merror:\x1b(B\x1b[m Missing return statement" in result
 
 
