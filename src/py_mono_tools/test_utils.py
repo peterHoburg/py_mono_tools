@@ -49,7 +49,7 @@ def vagrant(commands: str, cwd: pathlib.Path = None) -> t.Tuple[int, bytes]:
 def example_repo_path(repo: str) -> pathlib.Path:
     path = pathlib.Path(__file__)
     project_root = path
-    while project_root.name != "test":
+    while project_root.name != "src":
         project_root = project_root.parent
     project_root = project_root.parent
     example_repo = project_root.joinpath("example_repos")
