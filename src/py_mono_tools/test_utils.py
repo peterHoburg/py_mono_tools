@@ -1,8 +1,7 @@
 import subprocess  # nosec B404
 
-"""
-vagrant up; vagrant ssh -c "cd /vagrant; poetry run pmt lint --check"
-"""
+
+"""Vagrant up; vagrant ssh -c "cd /vagrant; poetry run pmt lint --check"."""
 
 
 def vagrant(cwd: str = None):
