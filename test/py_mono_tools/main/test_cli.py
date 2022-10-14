@@ -22,13 +22,13 @@ class TestCli:
         )
         assert b"main.py Imports are incorrectly sorted and/or formatted" in result
 
-    def test_mypy(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+    def test_black(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant
         returncode, result = vagrant_ssh(
-            command=f"poetry run pmt {conf_name} lint -s mypy",
+            command=f"poetry run pmt {conf_name} lint --check -s black",
             cwd=cwd.absolute(),
         )
-        assert b"main.py:6: \x1b[1m\x1b[31merror:\x1b(B\x1b[m Missing return statement" in result
+        assert b"Lint result: black 0 " in result
 
     def test_py_doc_string_formatter(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant
@@ -37,3 +37,51 @@ class TestCli:
             cwd=cwd.absolute(),
         )
         assert b"Lint result: py_doc_string_formatter 0" in result
+
+    def test_bandit(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} lint -s bandit",
+            cwd=cwd.absolute(),
+        )
+        assert b"Lint result: bandit 0" in result
+
+    def test_flake8(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} lint -s flake8",
+            cwd=cwd.absolute(),
+        )
+        assert b"F401" in result
+
+    def test_mypy(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} lint -s mypy",
+            cwd=cwd.absolute(),
+        )
+        assert b"main.py:6: \x1b[1m\x1b[31merror:\x1b(B\x1b[m Missing return statement" in result
+
+    def test_pydocstyle(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} lint -s pydocstyle",
+            cwd=cwd.absolute(),
+        )
+        assert b"__init__.py:1 at module level:" in result
+
+    def test_pylint(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} lint -s pylint",
+            cwd=cwd.absolute(),
+        )
+        assert b"Lint result: pylint 0" in result
+
+    def test_pip_audit(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} lint -s pip-audit",
+            cwd=cwd.absolute(),
+        )
+        assert b"Lint result: pip-audit 0" in result
