@@ -5,6 +5,7 @@ import pathlib
 import typing as t
 
 from py_mono_tools.goals.interface import Deployer, Linter, Tester
+from py_mono_tools.interface import CliMachineOutput
 
 
 if t.TYPE_CHECKING:
@@ -31,6 +32,8 @@ class Consts:
 
     ALL_BACKENDS: t.List["Backend"] = []
     ALL_BACKEND_NAMES: t.List[str] = []
+
+    MACHINE_OUTPUT: CliMachineOutput = CliMachineOutput(return_code=0, all_outputs=b"", goals=[])
 
 
 consts = Consts()

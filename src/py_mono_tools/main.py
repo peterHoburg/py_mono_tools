@@ -17,9 +17,7 @@ from py_mono_tools.backends import Docker, System
 from py_mono_tools.config import consts, logger
 from py_mono_tools.goals import deployers as deployers_mod, linters as linters_mod, testers as testers_mod
 from py_mono_tools.goals.interface import Deployer, Language, Linter, Tester
-
-
-logger.info("Starting main")
+from py_mono_tools.interface import GoalOutput
 
 
 def _find_goals():
@@ -62,11 +60,16 @@ def _load_conf(conf_path: str) -> ModuleType:
     return mod
 
 
-def _init_logger(verbose: bool):
+def _init_logger(verbose: bool, silent: bool = False):
+    logging_level = logging.INFO
     if verbose:
-        logger.setLevel(logging.DEBUG)
-        for handler in logger.handlers:
-            handler.setLevel(logging.DEBUG)
+        logging_level = logging.DEBUG
+    if silent:
+        logging_level = logging.ERROR
+
+    logger.setLevel(logging_level)
+    for handler in logger.handlers:
+        handler.setLevel(logging_level)
 
 
 def _set_absolute_path(absolute_path: str):
@@ -146,14 +149,14 @@ This can be set via this flag, the BACKEND var in CONF, or defaulted to system.
 @click.option("--relative_path", "-rp", default=None, type=click.Path())
 @click.option("--name", "-n", default=None, type=str, help="Name as defined in CONF NAME=...")
 @click.option("--verbose", "-v", default=False, is_flag=True)
-def cli(backend, absolute_path, relative_path, name, verbose):
+@click.option("--silent", "-s", default=False, is_flag=True)
+@click.option("--machine_output", "-mo", default=False, is_flag=True)
+def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_output):
     """Py mono tool is a CLI tool that simplifies using python in a monorepo."""
-    logger.info("Starting cli")
-
     if "--help" in sys.argv or "-h" in sys.argv:
         return
 
-    _init_logger(verbose=verbose)
+    _init_logger(verbose=verbose, silent=silent)
 
     logger.debug("Executed from: %s", consts.EXECUTED_FROM)
     logger.debug("Current backend: %s", consts.CURRENT_BACKEND)
@@ -249,6 +252,12 @@ def lint(
             logs, return_code = linter.check()
         else:
             logs, return_code = linter.run()
+
+        consts.MACHINE_OUTPUT.goals.append(GoalOutput(name=linter.name, output=logs, return_code=return_code))
+
+        if return_code != 0:
+            consts.MACHINE_OUTPUT.return_code = 1
+
         logger.info("Lint result: %s %s", linter.name, return_code)
 
         if show_success is False and return_code == 0:
@@ -262,6 +271,7 @@ def lint(
             sys.exit(1)
 
     logger.info("Linting complete")
+    print(consts.MACHINE_OUTPUT.json(indent=2))
 
 
 @cli.command()
