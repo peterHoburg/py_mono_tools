@@ -8,7 +8,7 @@ packages = [{include = "docker_module", from="src"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-py-mono-tools = {extras = ["linters-python"], version = "^0.0.23"}
+py-mono-tools = {extras = ["python-linters"], version = "^0"}
 
 
 [build-system]

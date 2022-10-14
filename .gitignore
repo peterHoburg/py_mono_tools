@@ -889,3 +889,4 @@ Temporary Items
 *.tfvars
 !example.tfvars
 /terraform/services/tfe/.terraform/
+*.vagrant

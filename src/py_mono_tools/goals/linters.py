@@ -654,7 +654,7 @@ DEFAULT_PYTHON = [
     Mypy(),
     Pydocstyle(),
     Pylint(args=[f"--max-line-length={MAX_LINE_LENGTH}"]),
-    PipAudit(),
+    # PipAudit(),
 ]
 
 DEFAULT_TERRAFORM = [

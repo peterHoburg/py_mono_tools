@@ -44,7 +44,7 @@ click = "^8"
 
 # linters-python
 bandit = "^1"
-black = "^22"
+black = {extras = ["d"], version = "^22"}
 flake8 = "^5"
 isort = "^5"
 mypy = "^0"

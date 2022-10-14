@@ -1,0 +1,9 @@
+#!/user/bin/env python
+# -*- coding: utf-8 -*-
+from py_mono_tools.goals.linters import DEFAULT_PYTHON
+
+
+NAME = "py_mono_tools_tests"
+BACKEND = "system"
+
+LINT = [*DEFAULT_PYTHON]
