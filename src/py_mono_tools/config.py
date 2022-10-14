@@ -33,7 +33,8 @@ class Consts:
     ALL_BACKENDS: t.List["Backend"] = []
     ALL_BACKEND_NAMES: t.List[str] = []
 
-    MACHINE_OUTPUT: CliMachineOutput = CliMachineOutput(return_code=0, all_outputs=b"", goals=[])
+    MACHINE_OUTPUT: CliMachineOutput = CliMachineOutput(returncode=0, all_outputs=b"", goals=[])
+    USE_MACHINE_OUTPUT: bool = False
 
 
 consts = Consts()

@@ -20,7 +20,7 @@ def _run(tester: str, args: t.List[str], workdir=None) -> t.Tuple[str, int]:
     color = GREEN if return_code == 0 else RED
     logs += color
     logs += log_format.format(tester + " start")
-    logs = logs + returned_logs
+    logs = logs + returned_logs.decode("utf-8")
     logs += color
     logs += log_format.format(tester + " end")
     logs += RESET

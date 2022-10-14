@@ -1,3 +1,4 @@
+import json
 import pathlib
 
 import pytest
@@ -29,6 +30,16 @@ class TestCli:
             cwd=cwd.absolute(),
         )
         assert b"Lint result: black 0 " in result
+
+    def test_black_machine_output(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} -mo lint --check -s black",
+            cwd=cwd.absolute(),
+        )
+        json_result = json.loads(result)
+        assert json_result["goals"][0]["name"] == "black"
+        assert json_result["goals"][0]["returncode"] == 0
 
     def test_py_doc_string_formatter(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant

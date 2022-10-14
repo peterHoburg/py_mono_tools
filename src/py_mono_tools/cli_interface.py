@@ -7,14 +7,14 @@ class GoalOutput(pydantic.BaseModel):
     """Output of a goal."""
 
     name: str
-    return_code: int
+    returncode: int
     output: bytes
 
 
 class CliMachineOutput(pydantic.BaseModel):
     """Output returned when the machine output flag is set."""
 
-    return_code: int
+    returncode: int
     all_outputs: bytes
 
     goals: t.List[GoalOutput]

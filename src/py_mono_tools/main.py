@@ -47,6 +47,7 @@ def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_ou
     if machine_output is True:
         silent = True
         verbose = False
+        consts.USE_MACHINE_OUTPUT = True
 
     init_logger(verbose=verbose, silent=silent)
     logger.info("Starting py_mono_tools")
@@ -146,10 +147,10 @@ def lint(
         else:
             logs, return_code = linter.run()
 
-        consts.MACHINE_OUTPUT.goals.append(GoalOutput(name=linter.name, output=logs, return_code=return_code))
+        consts.MACHINE_OUTPUT.goals.append(GoalOutput(name=linter.name, output=logs, returncode=return_code))
 
         if return_code != 0:
-            consts.MACHINE_OUTPUT.return_code = 1
+            consts.MACHINE_OUTPUT.returncode = 1
 
         logger.info("Lint result: %s %s", linter.name, return_code)
 
@@ -164,7 +165,8 @@ def lint(
             sys.exit(1)
 
     logger.info("Linting complete")
-    print(consts.MACHINE_OUTPUT.json(indent=2))
+    if consts.USE_MACHINE_OUTPUT is True:
+        print(consts.MACHINE_OUTPUT.json(indent=2))
 
 
 @cli.command()

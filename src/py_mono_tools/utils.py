@@ -12,9 +12,17 @@ from types import ModuleType
 from py_mono_tools.config import consts, logger
 
 
-def run_command_in_tty(command: t.Union[t.List[str], str], cwd: pathlib.Path) -> t.Tuple[int, bytes]:
+def run_command_in_tty(
+    command: t.Union[t.List[str], str],
+    cwd: pathlib.Path,
+    env: t.Optional[t.Dict[str, t.Any]] = None,
+) -> t.Tuple[int, bytes]:
     if isinstance(command, list):
         command = " ".join(command)
+
+    subprocess_kwargs = {}
+    if env is not None:
+        subprocess_kwargs["env"] = env
 
     command_fd, worker_fd = pty.openpty()
 
@@ -27,6 +35,7 @@ def run_command_in_tty(command: t.Union[t.List[str], str], cwd: pathlib.Path) ->
         universal_newlines=True,
         shell=True,
         cwd=cwd,
+        **subprocess_kwargs,
     )
     returncode = p.wait()
     os.close(worker_fd)
@@ -45,7 +54,7 @@ def run_command_in_tty(command: t.Union[t.List[str], str], cwd: pathlib.Path) ->
 
 
 def vagrant_ssh(command: str, cwd: pathlib.Path) -> t.Tuple[int, bytes]:
-    run_commands = f'vagrant ssh default --command "cd /vagrant; {command}"'
+    run_commands = f'vagrant ssh default --command "cd /example_repos/docker_module; {command}"'
     returncode, output = run_command_in_tty(run_commands, cwd=cwd)
     return returncode, output
 
