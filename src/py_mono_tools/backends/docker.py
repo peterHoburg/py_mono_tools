@@ -7,6 +7,7 @@ from pathlib import PosixPath
 
 from py_mono_tools.backends.interface import Backend
 from py_mono_tools.config import consts, logger
+from py_mono_tools.utils import run_command_in_tty
 
 
 # pylint: disable=R0801
@@ -49,15 +50,17 @@ class Docker(Backend):
         logger.info("running command: %s", commands)
 
         self.build()
-        with subprocess.Popen(  # nosec B603
-            commands,
-            cwd=consts.EXECUTED_FROM,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        ) as process:
 
-            stdout_data, stderr_data = process.communicate()
-        return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode("utf-8")
+        return run_command_in_tty(commands, consts.EXECUTED_FROM)
+        # with subprocess.Popen(  # nosec B603
+        #     commands,
+        #     cwd=consts.EXECUTED_FROM,
+        #     stdout=subprocess.PIPE,
+        #     stderr=subprocess.PIPE,
+        # ) as process:
+        #
+        #     stdout_data, stderr_data = process.communicate()
+        # return process.returncode, stderr_data.decode("utf-8") + stdout_data.decode("utf-8")
 
     def interactive(self, workdir: str = "/opt"):
         """Will drop user into interactive docker session."""

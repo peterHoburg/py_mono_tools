@@ -9,17 +9,15 @@ import click
 
 from py_mono_tools.config import consts, logger
 from py_mono_tools.goals.interface import Language
-from py_mono_tools.interface import GoalOutput
+from py_mono_tools.cli_interface import GoalOutput
 from py_mono_tools.utils import (
-    filter_linters,
-    find_goals,
-    init_backend,
     init_logger,
     load_conf,
     set_absolute_path,
     set_path_from_conf_name,
     set_relative_path,
 )
+from py_mono_tools.interface_utils import filter_linters, find_goals, init_backend
 
 
 find_goals()
@@ -46,7 +44,12 @@ def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_ou
     if "--help" in sys.argv or "-h" in sys.argv:
         return
 
+    if machine_output is True:
+        silent = True
+        verbose = False
+
     init_logger(verbose=verbose, silent=silent)
+    logger.info("Starting py_mono_tools")
 
     logger.debug("Executed from: %s", consts.EXECUTED_FROM)
     logger.debug("Current backend: %s", consts.CURRENT_BACKEND)

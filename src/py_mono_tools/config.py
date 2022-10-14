@@ -5,7 +5,7 @@ import pathlib
 import typing as t
 
 from py_mono_tools.goals.interface import Deployer, Linter, Tester
-from py_mono_tools.interface import CliMachineOutput
+from py_mono_tools.cli_interface import CliMachineOutput
 
 
 if t.TYPE_CHECKING:
