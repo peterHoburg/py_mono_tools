@@ -3,7 +3,7 @@ FROM python:3.8-slim as base
 ARG USER_UID=1000
 RUN adduser --shell /bin/sh --system --group --uid "${USER_UID}" default
 
-WORKDIR /opt
+WORKDIR /example_repos/docker_module
 RUN chown -R default /opt
 
 USER default
@@ -26,6 +26,9 @@ ARG INSTALL_DEV_DEPS="true"
 RUN if [ "$INSTALL_DEV_DEPS" = "true" ] ; then . $VIRTUALENV_PATH/bin/activate && poetry install -n --no-root --sync --with dev; fi
 
 COPY --chown=default:default . .
+
+# Docker does not have access to the hosts root dir
+COPY --chown=default:default /py_mono_tools /py_mono_tools
 
 RUN . $VIRTUALENV_PATH/bin/activate && poetry install -n --only-root
 

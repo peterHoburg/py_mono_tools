@@ -31,4 +31,6 @@
       become: yes
       become_user: "{{ main_user }}"
       ansible.builtin.command: /home/{{ main_user }}/.local/bin/poetry install
+      args:
+        chdir: /example_repos/docker_module
 

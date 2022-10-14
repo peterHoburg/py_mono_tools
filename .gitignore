@@ -890,3 +890,4 @@ Temporary Items
 !example.tfvars
 /terraform/services/tfe/.terraform/
 *.vagrant
+/example_repos/docker_module/.vagrant.d/
