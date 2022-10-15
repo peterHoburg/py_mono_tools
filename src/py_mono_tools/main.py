@@ -7,17 +7,11 @@ import typing as t
 
 import click
 
-from py_mono_tools.config import consts, logger
-from py_mono_tools.goals.interface import Language
 from py_mono_tools.cli_interface import GoalOutput
-from py_mono_tools.utils import (
-    init_logger,
-    load_conf,
-    set_absolute_path,
-    set_path_from_conf_name,
-    set_relative_path,
-)
+from py_mono_tools.config import cfg, logger
+from py_mono_tools.goals.interface import Language
 from py_mono_tools.interface_utils import filter_linters, find_goals, init_backend
+from py_mono_tools.utils import init_logger, load_conf, set_absolute_path, set_path_from_conf_name, set_relative_path
 
 
 find_goals()
@@ -47,14 +41,14 @@ def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_ou
     if machine_output is True:
         silent = True
         verbose = False
-        consts.USE_MACHINE_OUTPUT = True
+        cfg.USE_MACHINE_OUTPUT = True
 
     init_logger(verbose=verbose, silent=silent)
     logger.info("Starting py_mono_tools")
 
-    logger.debug("Executed from: %s", consts.EXECUTED_FROM)
-    logger.debug("Current backend: %s", consts.CURRENT_BACKEND)
-    logger.debug("Backends: %s", consts.BACKENDS)
+    logger.debug("Executed from: %s", cfg.EXECUTED_FROM)
+    logger.debug("Current backend: %s", cfg.CURRENT_BACKEND)
+    logger.debug("Backends: %s", cfg.BACKENDS)
 
     if absolute_path is not None:
         set_absolute_path(absolute_path=absolute_path)
@@ -64,11 +58,11 @@ def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_ou
         set_path_from_conf_name(name)
 
     try:
-        mod = load_conf(consts.EXECUTED_FROM)
-        consts.CONF = mod
+        mod = load_conf(cfg.EXECUTED_FROM)
+        cfg.CONF = mod
         if backend is None:
             try:
-                backend = consts.CONF.BACKEND
+                backend = cfg.CONF.BACKEND
             except AttributeError:
                 backend = "system"
 
@@ -76,7 +70,14 @@ def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_ou
 
         init_backend(backend)
     except FileNotFoundError:
-        logger.error("No CONF file found in %s", consts.EXECUTED_FROM)
+        logger.error("No CONF file found in %s", cfg.EXECUTED_FROM)
+
+
+@cli.result_callback()
+def output(*args, **kwargs):
+    """Callback that is executed after a command is executed."""
+    if cfg.USE_MACHINE_OUTPUT is True:
+        click.echo(cfg.MACHINE_OUTPUT.json(indent=2))
 
 
 @cli.command()
@@ -90,9 +91,9 @@ def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_ou
     Specify one or more linters to run. NOTE: The linter MUST be listed in the respected CONF file.
 
     All Linters:
-    {consts.ALL_LINTER_NAMES}
+    {cfg.ALL_LINTER_NAMES}
     """,
-    shell_complete=consts.ALL_LINTER_NAMES,
+    shell_complete=cfg.ALL_LINTER_NAMES,
 )
 @click.option("--fail_fast", "-ff", is_flag=True, default=False, help="Stop on first failure.")
 @click.option("--show_success", is_flag=True, default=False, help="Show successful outputs")
@@ -147,10 +148,10 @@ def lint(
         else:
             logs, return_code = linter.run()
 
-        consts.MACHINE_OUTPUT.goals.append(GoalOutput(name=linter.name, output=logs, returncode=return_code))
+        cfg.MACHINE_OUTPUT.goals[linter.name] = GoalOutput(name=linter.name, output=logs, returncode=return_code)
 
         if return_code != 0:
-            consts.MACHINE_OUTPUT.returncode = 1
+            cfg.MACHINE_OUTPUT.returncode = 1
 
         logger.info("Lint result: %s %s", linter.name, return_code)
 
@@ -165,14 +166,12 @@ def lint(
             sys.exit(1)
 
     logger.info("Linting complete")
-    if consts.USE_MACHINE_OUTPUT is True:
-        print(consts.MACHINE_OUTPUT.json(indent=2))
 
 
 @cli.command()
 def test():
     """Run all the tests specified in the CONF file."""
-    testers = consts.CONF.TEST
+    testers = cfg.CONF.TEST
     for tester in testers:
         logger.info("Testing: %s", tester.name)
         logs, return_code = tester.run()
@@ -184,7 +183,7 @@ def test():
 @click.option("--plan", is_flag=True, default=False)
 def deploy(plan: bool):
     """Run the specified build and deploy in the specific CONF file."""
-    deployers = consts.CONF.DEPLOY  # type: ignore
+    deployers = cfg.CONF.DEPLOY  # type: ignore
     for deployer in deployers:
         logger.info("Deploying: %s", deployer.name)
         if plan is True:
@@ -198,7 +197,7 @@ def deploy(plan: bool):
 @cli.command()
 def interactive():
     """Drop into an interactive session in your specified backend."""
-    consts.CURRENT_BACKEND.interactive()
+    cfg.CURRENT_BACKEND.interactive()
 
 
 @cli.command(name="list")
@@ -213,7 +212,7 @@ def list_():
                 conf_names.append(f"{mod.NAME} -- {rel_path}")
 
     print("Backends:")
-    for backend in consts.ALL_BACKEND_NAMES:
+    for backend in cfg.ALL_BACKEND_NAMES:
         print("    " + backend)
 
     print("CONF file names:")
@@ -221,15 +220,15 @@ def list_():
         print("    " + conf_name)
 
     print("Deployers:")
-    for deployer in consts.ALL_DEPLOYER_NAMES:
+    for deployer in cfg.ALL_DEPLOYER_NAMES:
         print("    " + deployer)
 
     print("Linters:")
-    for linter in consts.ALL_LINTER_NAMES:
+    for linter in cfg.ALL_LINTER_NAMES:
         print("    " + linter)
 
     print("Testers:")
-    for tester in consts.ALL_TESTER_NAMES:
+    for tester in cfg.ALL_TESTER_NAMES:
         print("    " + tester)
 
 
@@ -243,7 +242,7 @@ def list_():
 #     Docker is the default.
 #     """
 #     logger.info(modules)
-#     consts.CURRENT_BACKEND.build(force_rebuild=force_rebuild)
+#     cfg.CURRENT_BACKEND.build(force_rebuild=force_rebuild)
 #
 #
 #

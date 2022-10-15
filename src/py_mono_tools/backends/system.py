@@ -4,7 +4,7 @@ import subprocess  # nosec B404
 import typing as t
 
 from py_mono_tools.backends.interface import Backend
-from py_mono_tools.config import consts, logger
+from py_mono_tools.config import cfg, logger
 
 
 class System(Backend):
@@ -25,7 +25,7 @@ class System(Backend):
 
         with subprocess.Popen(  # nosec B603
             args,
-            cwd=workdir or consts.EXECUTED_FROM,
+            cwd=workdir or cfg.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ) as process:

@@ -6,7 +6,7 @@ import typing as t
 from pathlib import PosixPath
 
 from py_mono_tools.backends.interface import Backend
-from py_mono_tools.config import consts, logger
+from py_mono_tools.config import cfg, logger
 
 
 # pylint: disable=R0801
@@ -36,7 +36,7 @@ class Docker(Backend):
             "-w",
             workdir,
             "-v",
-            f"{consts.EXECUTED_FROM}:{workdir}",
+            f"{cfg.EXECUTED_FROM}:{workdir}",
             "-it",
             "pmt_docker_backend",
         ]
@@ -51,7 +51,7 @@ class Docker(Backend):
         self.build()
         with subprocess.Popen(  # nosec B603
             commands,
-            cwd=consts.EXECUTED_FROM,
+            cwd=cfg.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ) as process:
@@ -69,7 +69,7 @@ class Docker(Backend):
             "-w",
             workdir,
             "-v",
-            f"{consts.EXECUTED_FROM}:{workdir}",
+            f"{cfg.EXECUTED_FROM}:{workdir}",
             "-it",
             "pmt_docker_backend",
             "/bin/bash",
@@ -96,7 +96,7 @@ class Docker(Backend):
                 ".",
             ],
             env=env,
-            cwd=consts.EXECUTED_FROM,
+            cwd=cfg.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ) as process:
@@ -118,7 +118,7 @@ class Docker(Backend):
             subprocess.check_output(  # nosec B607 B603 B602
                 "docker ps -q | xargs -r docker kill",
                 shell=True,
-                cwd=consts.EXECUTED_FROM,
+                cwd=cfg.EXECUTED_FROM,
             )
             # subprocess.check_output(  # nosec B607 B603
             #     ["docker-compose", "down", "--remove-orphans"],

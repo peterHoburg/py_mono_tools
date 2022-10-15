@@ -2,16 +2,16 @@ import inspect
 import typing as t
 
 from py_mono_tools.backends import Docker, System
-from py_mono_tools.config import consts, logger
+from py_mono_tools.config import cfg, logger
 from py_mono_tools.goals import deployers as deployers_mod, linters as linters_mod, testers as testers_mod
 from py_mono_tools.goals.interface import Deployer, Language, Linter, Tester
 
 
 def find_goals():
     goals = [
-        (linters_mod, Linter, "linters", consts.ALL_LINTERS, consts.ALL_LINTER_NAMES),
-        (deployers_mod, Deployer, "deployers", consts.ALL_DEPLOYERS, consts.ALL_DEPLOYER_NAMES),
-        (testers_mod, Tester, "testers", consts.ALL_TESTERS, consts.ALL_TESTER_NAMES),
+        (linters_mod, Linter, "linters", cfg.ALL_LINTERS, cfg.ALL_LINTER_NAMES),
+        (deployers_mod, Deployer, "deployers", cfg.ALL_DEPLOYERS, cfg.ALL_DEPLOYER_NAMES),
+        (testers_mod, Tester, "testers", cfg.ALL_TESTERS, cfg.ALL_TESTER_NAMES),
     ]
 
     for goal in goals:
@@ -28,23 +28,23 @@ def find_goals():
         for goal_instance in goal_instances:
             consts_goal_names.append(goal_instance.name)
 
-    consts.ALL_BACKENDS = [Docker, System]
-    consts.ALL_BACKEND_NAMES = [Docker.name, System.name]
+    cfg.ALL_BACKENDS = [Docker, System]
+    cfg.ALL_BACKEND_NAMES = [Docker.name, System.name]
 
 
 def init_backend(_build_system: str):
     logger.debug("Initializing build system: %s", _build_system)
 
-    consts.BACKENDS = {
+    cfg.BACKENDS = {
         Docker.name: Docker,
         System.name: System,
     }
 
-    consts.CURRENT_BACKEND = consts.BACKENDS[_build_system]()
+    cfg.CURRENT_BACKEND = cfg.BACKENDS[_build_system]()
 
 
 def filter_linters(specific_linters: t.List[str], language: t.Optional[Language]) -> t.List[Linter]:
-    conf_linters: t.List[Linter] = consts.CONF.LINT  # type: ignore
+    conf_linters: t.List[Linter] = cfg.CONF.LINT  # type: ignore
     logger.debug("Linters: %s", conf_linters)
     linters_to_run: t.List[Linter] = []
     specific_linters = [s.strip().lower() for s in specific_linters]

@@ -17,4 +17,4 @@ class CliMachineOutput(pydantic.BaseModel):
     returncode: int
     all_outputs: bytes
 
-    goals: t.List[GoalOutput]
+    goals: t.Dict[str, GoalOutput]

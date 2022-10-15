@@ -38,8 +38,10 @@ class TestCli:
             cwd=cwd.absolute(),
         )
         json_result = json.loads(result)
-        assert json_result["goals"][0]["name"] == "black"
-        assert json_result["goals"][0]["returncode"] == 0
+        black_result = json_result["goals"]["black"]
+
+        assert black_result["name"] == "black"
+        assert black_result["returncode"] == 0
 
     def test_py_doc_string_formatter(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant

@@ -5,7 +5,7 @@ import pathlib
 import subprocess  # nosec B404
 import typing as t
 
-from py_mono_tools.config import consts, logger
+from py_mono_tools.config import cfg, logger
 from py_mono_tools.goals.interface import Deployer, Language
 
 
@@ -23,7 +23,7 @@ class PoetryDeployer(Deployer):
     def _run_poetry(self, commands: list):
         logger.info("running command: %s", commands)
 
-        cwd = consts.EXECUTED_FROM
+        cwd = cfg.EXECUTED_FROM
         if self._pyproject_loc is None:
             logger.error("pyproject.toml location not set")
             raise ValueError("pyproject.toml location not set")
@@ -119,7 +119,7 @@ class TerraformDeployer(Deployer):
             "run",
             "--rm",
             "-v",
-            f"{consts.EXECUTED_FROM}:/opt",
+            f"{cfg.EXECUTED_FROM}:/opt",
             "-w",
             "/opt",
         ]
@@ -145,7 +145,7 @@ class TerraformDeployer(Deployer):
 
         with subprocess.Popen(  # nosec B603
             commands,
-            cwd=consts.EXECUTED_FROM,
+            cwd=cfg.EXECUTED_FROM,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             env=env,

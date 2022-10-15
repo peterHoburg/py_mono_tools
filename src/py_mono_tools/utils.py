@@ -9,7 +9,7 @@ import subprocess  # nosec B404
 import typing as t
 from types import ModuleType
 
-from py_mono_tools.config import consts, logger
+from py_mono_tools.config import cfg, logger
 
 
 def run_command_in_tty(
@@ -98,16 +98,16 @@ def init_logger(verbose: bool, silent: bool = False):
 def set_absolute_path(absolute_path: str):
     logger.info("Overwriting execution root path: %s", absolute_path)
 
-    consts.EXECUTED_FROM = pathlib.Path(absolute_path).resolve()
+    cfg.EXECUTED_FROM = pathlib.Path(absolute_path).resolve()
 
-    os.chdir(consts.EXECUTED_FROM.resolve())
+    os.chdir(cfg.EXECUTED_FROM.resolve())
 
 
 def set_relative_path(relative_path: str):
     logger.info("Overwriting execution root path: %s", relative_path)
 
-    consts.EXECUTED_FROM = consts.EXECUTED_FROM.joinpath(pathlib.Path(relative_path).resolve())
-    os.chdir(consts.EXECUTED_FROM)
+    cfg.EXECUTED_FROM = cfg.EXECUTED_FROM.joinpath(pathlib.Path(relative_path).resolve())
+    os.chdir(cfg.EXECUTED_FROM)
 
 
 def set_path_from_conf_name(name: str):

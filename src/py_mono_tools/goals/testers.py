@@ -1,7 +1,7 @@
 """Contains all the implemented testers."""
 import typing as t
 
-from py_mono_tools.config import consts, GREEN, logger, RED, RESET
+from py_mono_tools.config import cfg, GREEN, logger, RED, RESET
 from py_mono_tools.goals.interface import Language, Tester
 
 
@@ -10,11 +10,11 @@ def _run(tester: str, args: t.List[str], workdir=None) -> t.Tuple[str, int]:
     logs = ""
 
     logger.debug("Running %s: %s", tester, args)
-    if len(args) > 0 and "docker" == args[0] and consts.CURRENT_BACKEND.name == "docker":  # type: ignore
+    if len(args) > 0 and "docker" == args[0] and cfg.CURRENT_BACKEND.name == "docker":  # type: ignore
         logger.debug("Bypassing docker backend for system backend. Tester: %s", tester)
-        return_code, returned_logs = consts.BACKENDS["system"]().run(args, workdir=workdir)  # type: ignore
+        return_code, returned_logs = cfg.BACKENDS["system"]().run(args, workdir=workdir)  # type: ignore
     else:
-        return_code, returned_logs = consts.CURRENT_BACKEND.run(args, workdir=workdir)  # type: ignore
+        return_code, returned_logs = cfg.CURRENT_BACKEND.run(args, workdir=workdir)  # type: ignore
     logger.debug("%s return code: %s", tester, return_code)
 
     color = GREEN if return_code == 0 else RED
