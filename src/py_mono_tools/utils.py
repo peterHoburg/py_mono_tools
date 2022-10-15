@@ -9,7 +9,8 @@ import subprocess  # nosec B404
 import typing as t
 from types import ModuleType
 
-from py_mono_tools.config import cfg, logger
+from py_mono_tools.cli_interface import GoalOutput
+from py_mono_tools.config import cfg, GREEN, logger, RED, RESET
 
 
 def run_command_in_tty(
@@ -123,3 +124,20 @@ def set_path_from_conf_name(name: str):
                     logger.debug("Using CONF: %s in %s", mod.NAME, path)
                     set_absolute_path(str(path))
                     return
+
+
+def machine_goal_to_human_output(goal: GoalOutput) -> str:
+    header_footer_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
+    if goal.returncode == 0:
+        color = GREEN
+    else:
+        color = RED
+    log = (
+        RESET
+        + color
+        + header_footer_format.format(goal.name + " START")
+        + goal.output.decode("UTF-8")
+        + header_footer_format.format(goal.name + " END")
+        + RESET
+    )
+    return log

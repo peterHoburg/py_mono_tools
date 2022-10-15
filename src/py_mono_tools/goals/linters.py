@@ -1,7 +1,7 @@
 """Contains all the implemented linters."""
 import typing as t
 
-from py_mono_tools.config import cfg, GREEN, logger, RED, RESET
+from py_mono_tools.config import cfg, logger
 from py_mono_tools.goals.interface import Language, Linter
 
 
@@ -10,9 +10,6 @@ MAX_LINE_LENGTH = 120
 
 
 def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
-    log_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
-    logs = ""
-
     logger.debug("Running %s: %s", linter, args)
     if len(args) > 0 and "docker" == args[0] and cfg.CURRENT_BACKEND.name == "docker":  # type: ignore
         logger.debug("Bypassing docker backend for system backend. Linter: %s", linter)
@@ -21,15 +18,7 @@ def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
         return_code, returned_logs = cfg.CURRENT_BACKEND.run(args)  # type: ignore
     logger.debug("%s return code: %s", linter, return_code)
 
-    color = GREEN if return_code == 0 else RED
-    logs += color
-    logs += log_format.format(linter + " start")
-    logs = logs + returned_logs
-    logs += color
-    logs += log_format.format(linter + " end")
-    logs += RESET
-
-    return logs, return_code
+    return returned_logs, return_code
 
 
 def _pull_latest_docker(image_name: str):

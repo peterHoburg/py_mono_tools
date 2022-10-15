@@ -11,7 +11,14 @@ from py_mono_tools.cli_interface import GoalOutput
 from py_mono_tools.config import cfg, logger
 from py_mono_tools.goals.interface import Language
 from py_mono_tools.interface_utils import filter_linters, find_goals, init_backend
-from py_mono_tools.utils import init_logger, load_conf, set_absolute_path, set_path_from_conf_name, set_relative_path
+from py_mono_tools.utils import (
+    init_logger,
+    load_conf,
+    machine_goal_to_human_output,
+    set_absolute_path,
+    set_path_from_conf_name,
+    set_relative_path,
+)
 
 
 find_goals()
@@ -148,18 +155,21 @@ def lint(
         else:
             logs, return_code = linter.run()
 
-        cfg.MACHINE_OUTPUT.goals[linter.name] = GoalOutput(name=linter.name, output=logs, returncode=return_code)
+        logger.info("Lint result: %s %s", linter.name, return_code)
+
+        goal = GoalOutput(name=linter.name, output=logs, returncode=return_code)
+        cfg.MACHINE_OUTPUT.goals[linter.name] = goal
 
         if return_code != 0:
             cfg.MACHINE_OUTPUT.returncode = 1
 
-        logger.info("Lint result: %s %s", linter.name, return_code)
-
-        if show_success is False and return_code == 0:
-            logger.debug("Skipping successful output")
-            logger.debug(logs)
-        else:
-            logger.info(logs)
+        if cfg.USE_MACHINE_OUTPUT is False:
+            formatted_log = machine_goal_to_human_output(goal)
+            if show_success is False and return_code == 0:
+                logger.debug("Skipping successful output")
+                logger.debug(formatted_log)
+            else:
+                logger.info(formatted_log)
 
         if fail_fast is True and return_code != 0:
             logger.error("Linter %s failed with code %s", linter.name, return_code)
