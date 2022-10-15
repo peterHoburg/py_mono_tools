@@ -16,8 +16,7 @@ def vagrant(request) -> t.Iterator[pathlib.Path]:
     halt_commands = "vagrant halt"
 
     returncode, output = run_command_in_tty(status_commands, cwd=cwd)
-
-    if b"poweroff" in output:
+    if b"poweroff" in output or b"The environment has not yet been created" in output:
         returncode, output = run_command_in_tty(up_commands, cwd=cwd)
         if returncode != 0:
             raise RuntimeError("vagrant up failed with output: %s", output)

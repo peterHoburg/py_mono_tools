@@ -3,7 +3,7 @@ FROM python:3.8-slim as base
 ARG USER_UID=1000
 RUN adduser --shell /bin/sh --system --group --uid "${USER_UID}" default
 
-WORKDIR /opt
+WORKDIR /example_repos/docker_module
 RUN chown -R default /opt
 
 USER default
@@ -19,6 +19,8 @@ RUN pip install --no-cache-dir poetry==1.2
 
 COPY --chown=default:default pyproject.toml  .
 COPY --chown=default:default poetry.lock  .
+COPY --chown=default:default offline_mirror offline_mirror
+
 
 RUN . $VIRTUALENV_PATH/bin/activate && poetry install -n --no-root --sync --without dev
 

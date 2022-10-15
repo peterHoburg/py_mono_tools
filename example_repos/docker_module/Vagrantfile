@@ -2,11 +2,16 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+    config.vm.synced_folder "../../", "/py_mono_tools"
+    config.vm.synced_folder ".", "/example_repos/docker_module"
+    config.vm.synced_folder ".", "/vagrant", owner: "vagrant"
+
     config.vm.box = "ubuntu/focal64"
     config.vm.provision "docker"
     config.vm.provision "ansible_local" do |ansible|
         ansible.playbook = "playbook.yml"
     end
+
 
 #     VAGRANT_COMMAND = ARGV[0]
 #     if VAGRANT_COMMAND == "ssh"

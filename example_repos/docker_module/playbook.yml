@@ -27,8 +27,54 @@
         creates: /home/{{ main_user }}/.local/bin/poetry
         executable: python3
 
+    - name: Delete py_mono_tools dist dir
+      file:
+        state: absent
+        path: /py_mono_tools/dist
+
+    - name: Delete offline_mirror dir
+      file:
+        state: absent
+        path: /example_repos/docker_module/offline_mirror
+
+    - name: Make offline_mirror dir.
+      file:
+        state: directory
+        path: /example_repos/docker_module/offline_mirror
+
+
+    - name: Delete all poetry venvs
+      file:
+        state: absent
+        path: /home/vagrant/.cache/pypoetry/virtualenvs
+
+
+    - name: Build py_mono_tools
+      become: yes
+      become_user: "{{ main_user }}"
+      ansible.builtin.command: /home/{{ main_user }}/.local/bin/poetry build
+      args:
+        chdir: /py_mono_tools
+
+    - name: Copy py_mono_tools tar.gz to offline_mirror
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /example_repos/docker_module/offline_mirror/py_mono_tools-999.0.0.tar.gz
+        owner: "{{ main_user }}"
+        group: "{{ main_user }}"
+        mode: '777'
+        force: 'yes'
+      with_fileglob:
+        - "/py_mono_tools/dist/py_mono_tools-*.tar.gz"
+
     - name: Install project using Poetry
       become: yes
       become_user: "{{ main_user }}"
       ansible.builtin.command: /home/{{ main_user }}/.local/bin/poetry install
+      args:
+        chdir: /example_repos/docker_module
 
+    - name: Delete content & directory
+      file:
+        state: absent
+        path: /py_mono_tools/dist
