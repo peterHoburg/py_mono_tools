@@ -27,6 +27,52 @@
         creates: /home/{{ main_user }}/.local/bin/poetry
         executable: python3
 
+    - name: Delete content & directory
+      file:
+        state: absent
+        path: /py_mono_tools/dist
+
+    - name: Delete content & directory
+      file:
+        state: absent
+        path: /example_repos/docker_module/offline_mirror
+
+    - name: Delete content & directory
+      file:
+        state: directory
+        path: /example_repos/docker_module/offline_mirror
+
+
+    - name: Delete content & directory
+      file:
+        state: absent
+        path: /home/vagrant/.cache/pypoetry/virtualenvs
+
+#    - name: remove poetry env
+#      become: yes
+#      become_user: "{{ main_user }}"
+#      ansible.builtin.command: /home/{{ main_user }}/.local/bin/poetry env remove
+#      args:
+#        chdir: /example_repos/docker_module
+
+    - name: Build py_mono_tools
+      become: yes
+      become_user: "{{ main_user }}"
+      ansible.builtin.command: /home/{{ main_user }}/.local/bin/poetry build
+      args:
+        chdir: /py_mono_tools
+
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /example_repos/docker_module/offline_mirror/py_mono_tools-999.0.0.tar.gz
+        owner: "{{ main_user }}"
+        group: "{{ main_user }}"
+        mode: '777'
+        force: 'yes'
+      with_fileglob:
+        - "/py_mono_tools/dist/py_mono_tools-*.tar.gz"
+
     - name: Install project using Poetry
       become: yes
       become_user: "{{ main_user }}"
@@ -34,3 +80,14 @@
       args:
         chdir: /example_repos/docker_module
 
+#    - name: Install project using Poetry
+#      become: yes
+#      become_user: "{{ main_user }}"
+#      ansible.builtin.command: docker build --no-cache -t pmt_docker_backend .
+#      args:
+#        chdir: /example_repos/docker_module
+
+    - name: Delete content & directory
+      file:
+        state: absent
+        path: /py_mono_tools/dist

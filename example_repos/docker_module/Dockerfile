@@ -19,6 +19,8 @@ RUN pip install --no-cache-dir poetry==1.2
 
 COPY --chown=default:default pyproject.toml  .
 COPY --chown=default:default poetry.lock  .
+COPY --chown=default:default offline_mirror offline_mirror
+
 
 RUN . $VIRTUALENV_PATH/bin/activate && poetry install -n --no-root --sync --without dev
 
@@ -26,9 +28,6 @@ ARG INSTALL_DEV_DEPS="true"
 RUN if [ "$INSTALL_DEV_DEPS" = "true" ] ; then . $VIRTUALENV_PATH/bin/activate && poetry install -n --no-root --sync --with dev; fi
 
 COPY --chown=default:default . .
-
-# Docker does not have access to the hosts root dir
-COPY --chown=default:default /py_mono_tools /py_mono_tools
 
 RUN . $VIRTUALENV_PATH/bin/activate && poetry install -n --only-root
 

@@ -891,3 +891,5 @@ Temporary Items
 /terraform/services/tfe/.terraform/
 *.vagrant
 /example_repos/docker_module/.vagrant.d/
+/example_repos/offline_mirror/
+/example_repos/docker_module/offline_mirror/

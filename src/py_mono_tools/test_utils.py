@@ -35,7 +35,7 @@ def run_command_in_tty(command: str, cwd: pathlib.Path) -> t.Tuple[int, bytes]:
 
 
 def vagrant_ssh(command: str, cwd: pathlib.Path) -> t.Tuple[int, bytes]:
-    run_commands = f'vagrant ssh default --command "cd /vagrant; {command}"'
+    run_commands = f'vagrant ssh default --command "cd /example_repos/docker_module; {command}"'
     returncode, output = run_command_in_tty(run_commands, cwd=cwd)
     return returncode, output
 
