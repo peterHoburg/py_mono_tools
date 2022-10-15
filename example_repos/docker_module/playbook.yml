@@ -27,33 +27,27 @@
         creates: /home/{{ main_user }}/.local/bin/poetry
         executable: python3
 
-    - name: Delete content & directory
+    - name: Delete py_mono_tools dist dir
       file:
         state: absent
         path: /py_mono_tools/dist
 
-    - name: Delete content & directory
+    - name: Delete offline_mirror dir
       file:
         state: absent
         path: /example_repos/docker_module/offline_mirror
 
-    - name: Delete content & directory
+    - name: Make offline_mirror dir.
       file:
         state: directory
         path: /example_repos/docker_module/offline_mirror
 
 
-    - name: Delete content & directory
+    - name: Delete all poetry venvs
       file:
         state: absent
         path: /home/vagrant/.cache/pypoetry/virtualenvs
 
-#    - name: remove poetry env
-#      become: yes
-#      become_user: "{{ main_user }}"
-#      ansible.builtin.command: /home/{{ main_user }}/.local/bin/poetry env remove
-#      args:
-#        chdir: /example_repos/docker_module
 
     - name: Build py_mono_tools
       become: yes
@@ -62,7 +56,7 @@
       args:
         chdir: /py_mono_tools
 
-    - name: Copy file with owner and permissions
+    - name: Copy py_mono_tools tar.gz to offline_mirror
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: /example_repos/docker_module/offline_mirror/py_mono_tools-999.0.0.tar.gz
@@ -79,13 +73,6 @@
       ansible.builtin.command: /home/{{ main_user }}/.local/bin/poetry install
       args:
         chdir: /example_repos/docker_module
-
-#    - name: Install project using Poetry
-#      become: yes
-#      become_user: "{{ main_user }}"
-#      ansible.builtin.command: docker build --no-cache -t pmt_docker_backend .
-#      args:
-#        chdir: /example_repos/docker_module
 
     - name: Delete content & directory
       file:
