@@ -85,6 +85,7 @@ def output(*args, **kwargs):
     """Callback that is executed after a command is executed."""
     if cfg.USE_MACHINE_OUTPUT is True:
         click.echo(cfg.MACHINE_OUTPUT.json(indent=2))
+    sys.exit(cfg.MACHINE_OUTPUT.returncode)
 
 
 @cli.command()
@@ -173,7 +174,7 @@ def lint(
 
         if fail_fast is True and return_code != 0:
             logger.error("Linter %s failed with code %s", linter.name, return_code)
-            sys.exit(1)
+            sys.exit(return_code)
 
     logger.info("Linting complete")
 
