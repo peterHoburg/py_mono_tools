@@ -40,7 +40,7 @@ This can be set via this flag, the BACKEND var in CONF, or defaulted to system.
 @click.option("--verbose", "-v", default=False, is_flag=True)
 @click.option("--silent", "-s", default=False, is_flag=True)
 @click.option("--machine_output", "-mo", default=False, is_flag=True)
-def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_output):
+def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_output):  # noqa: C901
     """Py mono tool is a CLI tool that simplifies using python in a monorepo."""
     if "--help" in sys.argv or "-h" in sys.argv:
         return
