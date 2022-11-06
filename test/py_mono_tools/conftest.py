@@ -3,7 +3,7 @@ import typing as t
 
 import pytest
 
-from py_mono_tools.utils.utils import example_repo_path, run_command_in_tty
+from py_mono_tools.utils import example_repo_path, run_command_in_tty
 
 
 @pytest.fixture(scope="class")

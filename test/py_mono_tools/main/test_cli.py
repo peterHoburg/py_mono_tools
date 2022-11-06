@@ -3,7 +3,7 @@ import pathlib
 
 import pytest
 
-from py_mono_tools.utils.utils import vagrant_ssh
+from py_mono_tools.utils import vagrant_ssh
 import typing as t
 
 

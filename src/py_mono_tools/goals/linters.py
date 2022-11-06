@@ -1,8 +1,8 @@
 """Contains all the implemented linters."""
 import typing as t
 
+from py_mono_tools.config import cfg, logger
 from py_mono_tools.goals.interface import Language, Linter
-from py_mono_tools.utils.config import cfg, logger
 
 
 CHECK_STRING = " check"

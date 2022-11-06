@@ -7,11 +7,13 @@ import typing as t
 
 import click
 
+from py_mono_tools.cli_interface import GoalOutput
+from py_mono_tools.config import cfg, logger
 from py_mono_tools.goals.interface import Language
-from py_mono_tools.utils.cli_interface import GoalOutput
-from py_mono_tools.utils.config import cfg, logger
-from py_mono_tools.utils.interface_utils import filter_linters, find_goals, init_backend
-from py_mono_tools.utils.utils import (
+from py_mono_tools.utils import (
+    filter_linters,
+    find_goals,
+    init_backend,
     init_logger,
     load_conf,
     machine_goal_to_human_output,
