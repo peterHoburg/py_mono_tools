@@ -9,8 +9,8 @@ import subprocess  # nosec B404
 import typing as t
 from types import ModuleType
 
-from py_mono_tools.cli_interface import GoalOutput
-from py_mono_tools.config import cfg, GREEN, logger, RED, RESET
+from py_mono_tools.utils.cli_interface import GoalOutput
+from py_mono_tools.utils.config import cfg, GREEN, logger, RED, RESET
 
 
 def run_command_in_tty(
@@ -115,7 +115,7 @@ def set_relative_path(relative_path: str):
 def set_path_from_conf_name(name: str):
     logger.info("Setting path from conf name: %s", name)
 
-    for rel_path, _, filenames in os.walk("."):
+    for rel_path, _, filenames in os.walk(".."):
         for filename in filenames:
             if filename == "CONF":
                 path = pathlib.Path(rel_path).resolve()

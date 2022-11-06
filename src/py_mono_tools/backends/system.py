@@ -4,7 +4,7 @@ import subprocess  # nosec B404
 import typing as t
 
 from py_mono_tools.backends.interface import Backend
-from py_mono_tools.config import cfg, logger
+from py_mono_tools.utils.config import cfg, logger
 
 
 class System(Backend):

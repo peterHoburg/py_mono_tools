@@ -2,9 +2,9 @@ import inspect
 import typing as t
 
 from py_mono_tools.backends import Docker, System
-from py_mono_tools.config import cfg, logger
 from py_mono_tools.goals import deployers as deployers_mod, linters as linters_mod, testers as testers_mod
 from py_mono_tools.goals.interface import Deployer, Language, Linter, Tester
+from py_mono_tools.utils.config import cfg, logger
 
 
 def find_goals():

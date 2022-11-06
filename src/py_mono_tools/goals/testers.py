@@ -1,8 +1,8 @@
 """Contains all the implemented testers."""
 import typing as t
 
-from py_mono_tools.config import cfg, GREEN, logger, RED, RESET
 from py_mono_tools.goals.interface import Language, Tester
+from py_mono_tools.utils.config import cfg, GREEN, logger, RED, RESET
 
 
 def _run(tester: str, args: t.List[str], workdir=None) -> t.Tuple[str, int]:
