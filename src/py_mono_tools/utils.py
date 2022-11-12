@@ -1,3 +1,4 @@
+"""A utils file. This is a file that contains a bunch of functions that are used in multiple places."""
 import importlib
 import importlib.machinery
 import importlib.util
@@ -22,6 +23,11 @@ def run_command_in_tty(
     cwd: pathlib.Path,
     env: t.Optional[t.Dict[str, t.Any]] = None,
 ) -> t.Tuple[int, bytes]:
+    """
+    Will run a command in a true TTY.
+
+    Python makes this non-trivial.
+    """
     if isinstance(command, list):
         command = " ".join(command)
 
@@ -60,12 +66,14 @@ def run_command_in_tty(
 
 
 def vagrant_ssh(command: str, cwd: pathlib.Path) -> t.Tuple[int, bytes]:
+    """Will run a command inside a vagrant box."""
     run_commands = f'vagrant ssh default --command "cd /example_repos/docker_module; {command}"'
     returncode, output = run_command_in_tty(run_commands, cwd=cwd)
     return returncode, output
 
 
 def example_repo_path(repo: str) -> pathlib.Path:
+    """Will return the path to the example repo."""
     path = pathlib.Path(__file__)
     project_root = path
     while project_root.name != "src":
@@ -78,6 +86,11 @@ def example_repo_path(repo: str) -> pathlib.Path:
 
 
 def load_conf(conf_path: str) -> ModuleType:
+    """
+    Will load the CONF file at the given path.
+
+    WARNING: This will execute any code that would normally run at import time!
+    """
     conf_location = f"{conf_path}/CONF"
     logger.debug("CONF location: %s", conf_location)
 
@@ -90,6 +103,11 @@ def load_conf(conf_path: str) -> ModuleType:
 
 
 def init_logger(verbose: bool, silent: bool = False):
+    """
+    Will initialize the logger.
+
+    The logging level depends on the verbose flag.
+    """
     logging_level = logging.INFO
     if verbose:
         logging_level = logging.DEBUG
@@ -102,6 +120,7 @@ def init_logger(verbose: bool, silent: bool = False):
 
 
 def set_absolute_path(absolute_path: str):
+    """Will set cfg.EXECUTED_FROM when the CLI is given an absolute path."""
     logger.info("Overwriting execution root path: %s", absolute_path)
 
     cfg.EXECUTED_FROM = pathlib.Path(absolute_path).resolve()
@@ -110,6 +129,7 @@ def set_absolute_path(absolute_path: str):
 
 
 def set_relative_path(relative_path: str):
+    """Will set cfg.EXECUTED_FROM when the CLI is given a relative path."""
     logger.info("Overwriting execution root path: %s", relative_path)
 
     cfg.EXECUTED_FROM = cfg.EXECUTED_FROM.joinpath(pathlib.Path(relative_path).resolve())
@@ -117,6 +137,12 @@ def set_relative_path(relative_path: str):
 
 
 def set_path_from_conf_name(name: str):
+    """
+    Will set the path based on the CONF file name.
+
+    This will search through all child directories until a CONF file is found that matches the given name. Once found,
+    the absolute path is set from the location of the CONF file.
+    """
     logger.info("Setting path from conf name: %s", name)
 
     for rel_path, _, filenames in os.walk("."):
@@ -132,6 +158,7 @@ def set_path_from_conf_name(name: str):
 
 
 def machine_goal_to_human_output(goal: GoalOutput) -> str:
+    """Will convert the given GoalOutput into colored, human-readable logs."""
     header_footer_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
     if goal.returncode == 0:
         color = GREEN
@@ -149,6 +176,7 @@ def machine_goal_to_human_output(goal: GoalOutput) -> str:
 
 
 def find_goals():
+    """Will find all goals that inherent from the goal ABC."""
     goals = [
         (linters_mod, Linter, "linters", cfg.ALL_LINTERS, cfg.ALL_LINTER_NAMES),
         (deployers_mod, Deployer, "deployers", cfg.ALL_DEPLOYERS, cfg.ALL_DEPLOYER_NAMES),
@@ -174,6 +202,7 @@ def find_goals():
 
 
 def init_backend(_build_system: str):
+    """Will run the init for the given backand and set it in cfg.CURRENT_BACKEND."""
     logger.debug("Initializing build system: %s", _build_system)
 
     cfg.BACKENDS = {
@@ -185,6 +214,11 @@ def init_backend(_build_system: str):
 
 
 def filter_linters(specific_linters: t.List[str], language: t.Optional[Language]) -> t.List[Linter]:
+    """
+    Will filter down the list of linters based on if a specific language is requested, or if a single linter is.
+
+    requested.
+    """
     conf_linters: t.List[Linter] = cfg.CONF.LINT  # type: ignore
     logger.debug("Linters: %s", conf_linters)
     linters_to_run: t.List[Linter] = []

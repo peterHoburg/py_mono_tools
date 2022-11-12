@@ -1,3 +1,4 @@
+"""Defines the outputs of the CLI in JSON."""
 import typing as t
 
 import pydantic

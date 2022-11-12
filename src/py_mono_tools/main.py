@@ -84,7 +84,11 @@ def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_ou
 
 @cli.result_callback()
 def output(*args, **kwargs):
-    """Callback that is executed after a command is executed."""
+    """
+    Will run after all commands.
+
+    Takes the machine output, converts to JSON, prints it, and exits.
+    """
     if cfg.USE_MACHINE_OUTPUT is True:
         click.echo(cfg.MACHINE_OUTPUT.json(indent=2))
     sys.exit(cfg.MACHINE_OUTPUT.returncode)
