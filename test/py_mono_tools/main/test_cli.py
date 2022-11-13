@@ -119,6 +119,24 @@ class TestCli:
         )
         assert b"Lint result: pip-audit 0" in result
 
+    def test_terrascan_docker_mo(self, vagrant: pathlib.Path, conf_name: t.Optional[str]):
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} -mo lint -s terrascan_docker",
+            cwd=cwd.absolute(),
+        )
+        json_result = json.loads(result)
+        assert json_result["returncode"] == 1
+
+        terrascan = json_result["goals"]["terrascan_docker"]
+
+        assert terrascan["name"] == "terrascan_docker"
+        assert terrascan["returncode"] == 3
+
+        output = json.loads(terrascan["output"])
+        for violation in output["results"]["violations"]:
+            assert violation["file"] == "Dockerfile"
+
     def test_all(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant
         returncode, result = vagrant_ssh(

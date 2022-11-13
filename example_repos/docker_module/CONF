@@ -9,7 +9,7 @@ BACKEND = "docker"
 
 LINT = [
     *DEFAULT_PYTHON,
-    # *DEFAULT_DOCKER,
+    *DEFAULT_DOCKER,
 ]
 TEST = []
 DEPLOY = []

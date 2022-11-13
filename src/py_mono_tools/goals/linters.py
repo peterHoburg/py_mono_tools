@@ -470,6 +470,8 @@ class TerrascanTerraform(Linter):
             "scan",
             "-i",
             "terraform",
+            "-o",
+            "json",
             *self._args,
         ]
         _pull_latest_docker(image_name)
@@ -624,6 +626,8 @@ class TerrascanDocker(Linter):
             "scan",
             "-i",
             "docker",
+            "-o",
+            "json",
             *self._args,
         ]
         _pull_latest_docker(image_name)
