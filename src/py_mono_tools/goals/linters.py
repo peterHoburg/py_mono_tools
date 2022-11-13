@@ -356,6 +356,7 @@ class Pylint(Linter):
         """Will run the pylint linter."""
         args = [
             "pylint",
+            "--recursive=y",
             cfg.EXECUTED_FROM,
             *self._args,
         ]
