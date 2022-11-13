@@ -1,7 +1,7 @@
 """Contains all the implemented linters."""
 import typing as t
 
-from py_mono_tools.config import consts, GREEN, logger, RED, RESET
+from py_mono_tools.config import cfg, logger
 from py_mono_tools.goals.interface import Language, Linter
 
 
@@ -10,31 +10,20 @@ MAX_LINE_LENGTH = 120
 
 
 def _run(linter: str, args: t.List[str]) -> t.Tuple[str, int]:
-    log_format = "\n" + "#" * 20 + "  {}  " + "#" * 20 + "\n"
-    logs = ""
-
     logger.debug("Running %s: %s", linter, args)
-    if len(args) > 0 and "docker" == args[0] and consts.CURRENT_BACKEND.name == "docker":  # type: ignore
+    if len(args) > 0 and "docker" == args[0] and cfg.CURRENT_BACKEND.name == "docker":  # type: ignore
         logger.debug("Bypassing docker backend for system backend. Linter: %s", linter)
-        return_code, returned_logs = consts.BACKENDS["system"]().run(args)  # type: ignore
+        return_code, returned_logs = cfg.BACKENDS["system"]().run(args)  # type: ignore
     else:
-        return_code, returned_logs = consts.CURRENT_BACKEND.run(args)  # type: ignore
+        return_code, returned_logs = cfg.CURRENT_BACKEND.run(args)  # type: ignore
     logger.debug("%s return code: %s", linter, return_code)
 
-    color = GREEN if return_code == 0 else RED
-    logs += color
-    logs += log_format.format(linter + " start")
-    logs = logs + returned_logs
-    logs += color
-    logs += log_format.format(linter + " end")
-    logs += RESET
-
-    return logs, return_code
+    return returned_logs, return_code
 
 
 def _pull_latest_docker(image_name: str):
     logger.info("Pulling latest docker image: %s", image_name)
-    consts.BACKENDS["system"]().run(["docker", "pull", image_name])  # type: ignore
+    cfg.BACKENDS["system"]().run(["docker", "pull", image_name])  # type: ignore
 
 
 class Bandit(Linter):
@@ -54,7 +43,7 @@ class Bandit(Linter):
         args = [
             "bandit",
             "-r",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name, args)
@@ -85,7 +74,7 @@ class Black(Linter):
         """
         args = [
             "black",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
 
@@ -100,7 +89,7 @@ class Black(Linter):
         args = [
             "black",
             "--check",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name + CHECK_STRING, args)
@@ -149,7 +138,7 @@ class Flake8(Linter):
         """Will run the flake8 linter."""
         args = [
             "flake8",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
 
@@ -184,7 +173,7 @@ class ISort(Linter):
         """
         args = [
             "isort",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name, args)
@@ -198,7 +187,7 @@ class ISort(Linter):
         args = [
             "isort",
             "-c",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name + CHECK_STRING, args)
@@ -221,7 +210,7 @@ class Mccabe(Linter):
             "python",
             "-m",
             "mccabe",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name, args)
@@ -247,7 +236,7 @@ class Mypy(Linter):
         """Will run the mypy linter."""
         args = [
             "mypy",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name, args)
@@ -279,7 +268,7 @@ class PyDocStringFormatter(Linter):
         args = [
             "pydocstringformatter",
             "-w",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
 
@@ -293,7 +282,7 @@ class PyDocStringFormatter(Linter):
         """
         args = [
             "pydocstringformatter",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
 
@@ -316,7 +305,7 @@ class Pydocstyle(Linter):
         """Will run the pydocstyle linter."""
         args = [
             "pydocstyle",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name, args)
@@ -341,7 +330,7 @@ class Pyflakes(Linter):
         """Will run the pyflakes linter."""
         args = [
             "pyflakes",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name, args)
@@ -367,7 +356,7 @@ class Pylint(Linter):
         """Will run the pylint linter."""
         args = [
             "pylint",
-            consts.EXECUTED_FROM,
+            cfg.EXECUTED_FROM,
             *self._args,
         ]
         return _run(self.name, args)
@@ -434,7 +423,7 @@ class CheckOV(Linter):
             "--tty",
             "--rm",
             "--volume",
-            f"{consts.EXECUTED_FROM}:/tf",
+            f"{cfg.EXECUTED_FROM}:/tf",
             "--workdir",
             "/tf",
             image_name,
@@ -474,7 +463,7 @@ class TerrascanTerraform(Linter):
             "run",
             "--rm",
             "--volume",
-            f"{consts.EXECUTED_FROM}:/iac",
+            f"{cfg.EXECUTED_FROM}:/iac",
             "--workdir",
             "/iac",
             image_name,
@@ -516,7 +505,7 @@ class TFLint(Linter):
             "run",
             "--rm",
             "-v",
-            f"{consts.EXECUTED_FROM}:/data",
+            f"{cfg.EXECUTED_FROM}:/data",
             "-t",
             image_name,
             *self._args,
@@ -552,7 +541,7 @@ class TFSec(Linter):
             "--rm",
             "-it",
             "-v",
-            f"{consts.EXECUTED_FROM}:/src",
+            f"{cfg.EXECUTED_FROM}:/src",
             image_name,
             "/src",
             *self._args,
@@ -587,7 +576,7 @@ class TerraformFmt(Linter):
             "run",
             "--rm",
             "--volume",
-            f"{consts.EXECUTED_FROM}:/opt",
+            f"{cfg.EXECUTED_FROM}:/opt",
             "--workdir",
             "/opt",
             image_name,
@@ -628,7 +617,7 @@ class TerrascanDocker(Linter):
             "run",
             "--rm",
             "--volume",
-            f"{consts.EXECUTED_FROM}:/iac",
+            f"{cfg.EXECUTED_FROM}:/iac",
             "--workdir",
             "/iac",
             image_name,

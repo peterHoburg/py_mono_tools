@@ -1,8 +1,9 @@
+import json
 import pathlib
 
 import pytest
 
-from py_mono_tools.test_utils import vagrant_ssh
+from py_mono_tools.utils import vagrant_ssh
 import typing as t
 
 
@@ -22,6 +23,22 @@ class TestCli:
         )
         assert b"main.py Imports are incorrectly sorted and/or formatted" in result
 
+    def test_isort_machine_output(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} -mo lint --check -s isort",
+            cwd=cwd.absolute(),
+        )
+
+        json_result = json.loads(result)
+        assert json_result["returncode"] == 1
+
+        isort_result = json_result["goals"]["isort"]
+
+        assert isort_result["name"] == "isort"
+        assert isort_result["returncode"] == 1
+        assert "main.py Imports are incorrectly sorted and/or formatted" in isort_result["output"]
+
     def test_black(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant
         returncode, result = vagrant_ssh(
@@ -29,6 +46,20 @@ class TestCli:
             cwd=cwd.absolute(),
         )
         assert b"Lint result: black 0 " in result
+
+    def test_black_machine_output(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
+        cwd = vagrant
+        returncode, result = vagrant_ssh(
+            command=f"poetry run pmt {conf_name} -mo lint --check -s black",
+            cwd=cwd.absolute(),
+        )
+        json_result = json.loads(result)
+        assert json_result["returncode"] == 0
+
+        black_result = json_result["goals"]["black"]
+
+        assert black_result["name"] == "black"
+        assert black_result["returncode"] == 0
 
     def test_py_doc_string_formatter(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant
@@ -88,11 +119,12 @@ class TestCli:
         )
         assert b"Lint result: pip-audit 0" in result
 
-    @pytest.mark.skip()
     def test_all(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant
         returncode, result = vagrant_ssh(
-            command=f"poetry run pmt {conf_name} lint --check",
+            command=f"poetry run pmt {conf_name} -mo lint --check",
             cwd=cwd.absolute(),
         )
-        assert b"Lint result: pip-audit 0" in result
+
+        json_result = json.loads(result)
+        assert json_result["returncode"] == 1

@@ -4,6 +4,7 @@ import os
 import pathlib
 import typing as t
 
+from py_mono_tools.cli_interface import CliMachineOutput
 from py_mono_tools.goals.interface import Deployer, Linter, Tester
 
 
@@ -12,8 +13,8 @@ if t.TYPE_CHECKING:
 
 
 # pylint: disable=too-few-public-methods, invalid-name
-class Consts:
-    """Used to store some "consts" that will be set at CLI runtime, then used in other modules."""
+class Config:
+    """Used to store some "cfg" that will be set at CLI runtime, then used in other modules."""
 
     EXECUTED_FROM: pathlib.Path = pathlib.Path(os.getcwd())
     CURRENT_BACKEND: t.Optional["Backend"] = None
@@ -32,8 +33,11 @@ class Consts:
     ALL_BACKENDS: t.List["Backend"] = []
     ALL_BACKEND_NAMES: t.List[str] = []
 
+    MACHINE_OUTPUT: CliMachineOutput = CliMachineOutput(returncode=0, all_outputs=b"", goals={})
+    USE_MACHINE_OUTPUT: bool = False
 
-consts = Consts()
+
+cfg = Config()
 
 BLACK = "\x1b[30m"
 RED = "\x1b[31m"

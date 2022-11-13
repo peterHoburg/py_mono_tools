@@ -55,6 +55,7 @@ pip-audit = "^2"
 
 # testers-python
 pytest = "^7"
+pydantic = "^1"
 
 
 [tool.poetry.group.dev.dependencies]
