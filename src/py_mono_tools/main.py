@@ -76,7 +76,7 @@ def cli(backend, absolute_path, relative_path, name, verbose, silent, machine_ou
             except AttributeError:
                 backend = "system"
 
-        logger.info("Using backed: %s", backend)
+        logger.info("Using backend: %s", backend)
 
         init_backend(backend)
     except FileNotFoundError:
