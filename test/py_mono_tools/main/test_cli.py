@@ -101,14 +101,13 @@ class TestCli:
         )
         assert b"__init__.py:1 at module level:" in result
 
-    @pytest.mark.skip()
     def test_pylint(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
         cwd = vagrant
         returncode, result = vagrant_ssh(
             command=f"poetry run pmt {conf_name} lint -s pylint",
             cwd=cwd.absolute(),
         )
-        assert b"Lint result: pylint 0" in result
+        assert b"rc/docker_module/main.py:1:0: C0114: Missing module docstring (missing-module-docstring)" in result
 
     @pytest.mark.skip()
     def test_pip_audit(self, vagrant: pathlib.Path, conf_name: t.Optional[str]) -> None:
