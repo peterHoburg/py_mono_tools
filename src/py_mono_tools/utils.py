@@ -146,6 +146,7 @@ def set_path_from_conf_name(name: str):
     """
     logger.info("Setting path from conf name: %s", name)
 
+    # pylint: disable=R0801
     for rel_path, _, filenames in os.walk("."):
         for filename in filenames:
             if filename == "CONF":
