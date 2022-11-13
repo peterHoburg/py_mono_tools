@@ -1,10 +1,11 @@
 """Defines the outputs of the CLI in JSON."""
 import typing as t
 
-import pydantic
+from pydantic import BaseModel  # pylint: disable=E0611
 
 
-class GoalOutput(pydantic.BaseModel):
+# pylint: disable=R0903
+class GoalOutput(BaseModel):
     """Output of a goal."""
 
     name: str
@@ -12,7 +13,8 @@ class GoalOutput(pydantic.BaseModel):
     output: bytes
 
 
-class CliMachineOutput(pydantic.BaseModel):
+# pylint: disable=R0903
+class CliMachineOutput(BaseModel):
     """Output returned when the machine output flag is set."""
 
     returncode: int

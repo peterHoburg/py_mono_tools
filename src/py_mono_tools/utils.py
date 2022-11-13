@@ -37,7 +37,7 @@ def run_command_in_tty(
 
     command_fd, worker_fd = pty.openpty()
 
-    p = subprocess.Popen(  # nosec B602
+    process = subprocess.Popen(  # nosec B602
         [command],  # type: ignore
         # This is doing something weird. Using shell, and a single string arg to pass the entire string to the shell.
         preexec_fn=os.setsid,
@@ -49,7 +49,7 @@ def run_command_in_tty(
         cwd=cwd,
         **subprocess_kwargs,
     )
-    returncode = p.wait()
+    returncode = process.wait()
     os.close(worker_fd)
 
     outputs = []
